@@ -22,8 +22,12 @@
     }
 
     *{box-sizing:border-box}
+    html, body{ height:100%; }
+
+    /* ✅ 스크롤 없애고, 화면 안에서만 레이아웃 맞추기 */
     body{
       margin:0;
+      overflow: hidden; /* 핵심 */
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       background:
         radial-gradient(1200px 520px at 18% 8%, rgba(45,212,191,.18), transparent 60%),
@@ -33,46 +37,60 @@
       color:var(--text);
     }
 
-    .wrap{ width: 100%; margin:0; padding: 14px 12px 28px; }
+    /* ✅ 100vh를 꽉 쓰는 레이아웃 */
+    .wrap{
+      height: 100vh;
+      width: 100%;
+      margin: 0;
+      padding: 12px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
     header{
       display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding: 8px 2px 6px;
+      gap:10px; padding: 4px 2px 0;
+      flex: 0 0 auto;
     }
-    h1{margin:0; font-size:20px; letter-spacing:-.2px;}
+    h1{margin:0; font-size:18px; letter-spacing:-.2px;}
+
+    .rightTools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
 
     .bar{
-      margin-top: 10px;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 10px;
+      padding: 8px;
       backdrop-filter: blur(10px);
+      flex: 0 0 auto;
     }
 
     .controls{
       display:flex;
       flex-wrap:wrap;
       gap:8px;
-      align-items:flex-start;
+      align-items:center;
       justify-content:space-between;
     }
+
     .seg{display:flex; flex-wrap:wrap; gap:7px; align-items:center;}
 
     button{
       border: 1px solid rgba(15,23,42,.12);
       background: rgba(255,255,255,.92);
       color: var(--text);
-      padding: 9px 11px;
+      padding: 8px 10px;
       border-radius: 999px;
       cursor:pointer;
       transition: transform .08s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
-      font-weight: 750;
-      font-size: 12.5px;
+      font-weight: 760;
+      font-size: 12px;
       letter-spacing: -.1px;
       user-select:none;
       box-shadow: 0 6px 18px rgba(15,23,42,.06);
+      white-space: nowrap;
     }
     button:hover{
       background: #ffffff;
@@ -80,6 +98,7 @@
       box-shadow: 0 10px 24px rgba(15,23,42,.08);
     }
     button:active{ transform: scale(.98); }
+
     button.primary{
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(45,212,191,.70));
       border-color: rgba(20,184,166,.45);
@@ -91,41 +110,37 @@
       box-shadow: 0 16px 34px rgba(20,184,166,.22);
     }
     button.ghost{ background: rgba(255,255,255,.82); }
+
     button.danger{
       background: rgba(251,113,133,.12);
       border-color: rgba(251,113,133,.35);
       color:#9f1239;
       box-shadow: 0 10px 26px rgba(251,113,133,.10);
     }
-    button.danger:hover{
-      background: rgba(251,113,133,.16);
-      border-color: rgba(251,113,133,.45);
-    }
+
     button.active{
       outline: 2px solid rgba(20,184,166,.35);
       border-color: rgba(20,184,166,.55);
       background: rgba(45,212,191,.18);
     }
 
-    .rightTools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
-
+    /* 질문 입력칸 */
     .questionBox{
-      width: 100%;
       margin-top: 8px;
       display:flex;
       gap:8px;
       align-items:center;
       flex-wrap:wrap;
     }
-    .qLabel{ font-size: 12px; color: var(--muted); font-weight: 800; letter-spacing: -.1px; padding-left: 2px; }
+    .qLabel{ font-size: 11.5px; color: var(--muted); font-weight: 850; padding-left: 2px; }
     .qInput{
-      flex: 1 1 420px;
-      min-width: 220px;
+      flex: 1 1 320px;
+      min-width: 180px;
       border-radius: 14px;
       border: 1px solid rgba(15,23,42,.12);
       background: rgba(255,255,255,.92);
-      padding: 9px 11px;
-      font-size: 12.5px;
+      padding: 8px 10px;
+      font-size: 12px;
       outline: none;
       box-shadow: 0 6px 18px rgba(15,23,42,.06);
     }
@@ -134,101 +149,118 @@
       box-shadow: 0 10px 24px rgba(20,184,166,.14);
     }
 
+    /* ✅ 남은 공간을 stage가 전부 차지 */
     .stage{
-      margin-top: 10px;
+      flex: 1 1 auto;
+      min-height: 0; /* flex overflow 핵심 */
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 10px;
-      overflow:hidden;
+      padding: 8px;
       backdrop-filter: blur(10px);
+
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      overflow: hidden; /* stage 안에서 스크롤 방지 */
     }
 
+    /* 그리드는 stage의 남은 높이를 차지 */
     .grid{
+      flex: 1 1 auto;
+      min-height: 0;
       display:grid;
       align-items:start;
-      gap: 8px;
-      --cardW: 78px; /* 기본값(작게) */
+      gap: 6px;
+      --cardW: 60px;
     }
-    .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(var(--cardW), 1fr)); }
-    .grid.nine{  grid-template-columns: repeat(3, minmax(var(--cardW), 1fr)); }
-    .grid.gt{    grid-template-columns: repeat(9, minmax(var(--cardW), 1fr)); gap: 5px; }
+    .grid.nine{ grid-template-columns: repeat(3, minmax(var(--cardW), 1fr)); }
+    .grid.gt{ grid-template-columns: repeat(9, minmax(var(--cardW), 1fr)); gap: 4px; }
+    /* 1/2/3은 JS에서 gridTemplateColumns를 inline으로 설정 */
 
     .card{
       position:relative;
-      border-radius: 14px;
+      border-radius: 12px;
       overflow:hidden;
       border: 1px solid rgba(15,23,42,.10);
       background: rgba(255,255,255,.90);
       box-shadow: 0 10px 22px rgba(15,23,42,.09);
       cursor:pointer;
-      transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
       width: 100%;
-      max-width: 100%;
       aspect-ratio: 3 / 4.6;
       display:flex;
       align-items:center;
       justify-content:center;
     }
-    .card:hover{
-      transform: translateY(-1px);
-      border-color: rgba(20,184,166,.45);
-      box-shadow: 0 14px 30px rgba(15,23,42,.12);
-    }
-    .card.selected{
-      outline: 3px solid rgba(45,212,191,.30);
-      border-color: rgba(20,184,166,.55);
-    }
-    .card img{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
-      background: linear-gradient(180deg, rgba(45,212,191,.08), rgba(255,255,255,0));
-    }
+    .card img{ width:100%; height:100%; object-fit: contain; display:block; }
 
     .badge{
       position:absolute;
-      top:6px; left:6px;
-      font-size: 10.5px;
+      top:5px; left:5px;
+      font-size: 10px;
       font-weight: 900;
-      padding: 5px 7px;
+      padding: 4px 6px;
       border-radius: 999px;
-      background: rgba(255,255,255,.72);
+      background: rgba(255,255,255,.78);
       border: 1px solid rgba(15,23,42,.12);
       color: rgba(15,23,42,.86);
       backdrop-filter: blur(8px);
     }
+    .card.selected{
+      outline: 3px solid rgba(45,212,191,.28);
+      border-color: rgba(20,184,166,.55);
+    }
 
+    /* ✅ 체인 영역은 stage 안에서 고정 높이로만(세로 넘침 방지) */
     .chainBox{
-      margin-top: 10px;
-      padding: 10px;
+      flex: 0 0 auto;
+      display:none;
+      padding: 8px;
       border-radius: var(--radius2);
       background: rgba(45,212,191,.10);
       border: 1px solid rgba(20,184,166,.18);
+      max-height: 140px;
+      overflow: hidden;
     }
-    .chainTop{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom: 8px; }
-    .chainTitle{ margin:0; font-size: 13px; font-weight: 950; letter-spacing: -.1px; }
-    .chainMeta{ color: var(--muted); font-size: 11.5px; line-height:1.35; }
-    .chainRow{ display:flex; gap:8px; overflow:auto; padding-bottom: 6px; }
+    .chainTop{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom: 6px; }
+    .chainTitle{ margin:0; font-size: 12.5px; font-weight: 950; }
+    .chainMeta{ color: var(--muted); font-size: 11px; line-height:1.35; }
+
+    .chainRow{
+      display:flex;
+      gap:8px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding-bottom: 4px;
+    }
 
     .mini{
-      width: 64px; min-width: 64px;
+      width: 58px; min-width: 58px;
       aspect-ratio: 3/4.6;
-      border-radius: 12px;
+      border-radius: 10px;
       overflow:hidden;
       border: 1px solid rgba(15,23,42,.10);
       background: rgba(255,255,255,.90);
-      box-shadow: 0 10px 24px rgba(15,23,42,.08);
+      box-shadow: 0 10px 20px rgba(15,23,42,.08);
       position:relative;
       display:flex;
       align-items:center;
       justify-content:center;
     }
     .mini img{ width:100%; height:100%; object-fit: contain; display:block; }
-    .mini .badge{ top:5px; left:5px; font-size: 9.5px; padding: 4px 6px; }
+    .mini .badge{ top:4px; left:4px; font-size: 9px; padding: 3px 5px; }
 
+    footer{
+      flex: 0 0 auto;
+      text-align:center;
+      color: rgba(71,85,105,.9);
+      font-size: 11.5px;
+      padding: 2px 0 0;
+    }
+
+    /* Modal */
     .modalBackdrop{
       position:fixed; inset:0;
       background: rgba(15,23,42,.45);
@@ -285,14 +317,6 @@
       background: rgba(255,255,255,.75);
     }
 
-    footer{
-      margin-top: 14px;
-      text-align:center;
-      color: rgba(71,85,105,.9);
-      font-size: 12px;
-      padding: 8px 0 0;
-    }
-
     @media (max-width: 980px){
       .grid.gt{ grid-template-columns: repeat(6, minmax(var(--cardW), 1fr)); }
     }
@@ -301,6 +325,7 @@
       .grid.gt{ grid-template-columns: repeat(4, minmax(var(--cardW), 1fr)); }
       .modalInner{ grid-template-columns: 1fr; }
       .modalPreview{ width: 170px; }
+      .chainBox{ max-height: 130px; }
     }
   </style>
 </head>
@@ -338,9 +363,9 @@
     </section>
 
     <section class="stage" id="stage">
-      <div class="grid basic" id="grid"></div>
+      <div class="grid" id="grid"></div>
 
-      <div class="chainBox" id="chainBox" style="display:none">
+      <div class="chainBox" id="chainBox">
         <div class="chainTop">
           <div>
             <h3 class="chainTitle" id="chainTitle">체인</h3>
@@ -354,6 +379,7 @@
     <footer>제작 : 월홍🌙</footer>
   </div>
 
+  <!-- Modal -->
   <div class="modalBackdrop" id="modalBackdrop" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modalInner">
@@ -436,7 +462,9 @@
   let gt = null;
 
   const CHAIN_LEN = 8;
+  const CARD_AR = 4.6 / 3; // height = width * CARD_AR
 
+  const stage = document.getElementById("stage");
   const grid = document.getElementById("grid");
   const spreadButtons = document.getElementById("spreadButtons");
   const btnDraw = document.getElementById("btnDraw");
@@ -469,6 +497,7 @@
     const bp = basePath ?? "";
     return `${bp}${fileName(cardNo)}`;
   }
+
   function shuffle(arr){
     for(let i=arr.length-1; i>0; i--){
       const j = Math.floor(Math.random()*(i+1));
@@ -484,6 +513,7 @@
     if(deck.length < n) freshDeck();
     return deck.splice(0,n);
   }
+
   function checkImage(url){
     return new Promise((resolve)=>{
       const img = new Image();
@@ -502,66 +532,83 @@
     return false;
   }
 
+  // ✅ 레이아웃에 맞춰 카드 폭을 “실측 계산”해서 정함 (스크롤 0)
   function setCardWidth(px){
     grid.style.setProperty("--cardW", `${px}px`);
   }
 
-  /* ✅ 모든 스프레드: 화면 안에 “딱 들어오게” 작게 */
-  function applyResponsiveCardSize(){
-    const w = window.innerWidth;
+  function getGapPx(el){
+    const cs = getComputedStyle(el);
+    const g = cs.gap || cs.columnGap || "0px";
+    return Math.max(0, parseFloat(g) || 0);
+  }
+
+  function fitCardsToViewport(){
+    // 그리드가 차지할 수 있는 실제 크기
+    const gridRect = grid.getBoundingClientRect();
+    const gridW = Math.max(0, gridRect.width);
+    const gridH = Math.max(0, gridRect.height);
+
+    const gap = getGapPx(grid);
+
+    let cols = 1, rows = 1;
+
+    if(mode === "gt"){ cols = 9; rows = 4; }
+    else if(mode === "9"){ cols = 3; rows = 3; }
+    else{
+      const n = Number(mode);
+      cols = n; rows = 1;
+    }
+
+    // 가로 제한으로 가능한 카드 폭
+    const wByWidth = (gridW - gap * (cols - 1)) / cols;
+
+    // 세로 제한으로 가능한 카드 폭 (height = width*CARD_AR)
+    const wByHeight = ((gridH - gap * (rows - 1)) / rows) / CARD_AR;
+
+    // 둘 중 더 작은 값으로 → 무조건 한 화면 안에 들어감
+    let w = Math.floor(Math.min(wByWidth, wByHeight));
+
+    // 너무 작아지는 걸 방지(그래도 스크롤 없게)
+    const minW = mode === "gt" ? 38 : 46;
+    const maxW = mode === "gt" ? 78 : 120;
+    w = Math.max(minW, Math.min(maxW, w));
+
+    setCardWidth(w);
+  }
+
+  function applyGridTemplate(){
+    grid.className = "grid";
+    grid.style.gridTemplateColumns = "";
+    grid.style.gridTemplateRows = "";
 
     if(mode === "gt"){
-      // GT는 매우 작게
-      if(w >= 1600) setCardWidth(72);
-      else if(w >= 1400) setCardWidth(66);
-      else if(w >= 1200) setCardWidth(60);
-      else if(w >= 980)  setCardWidth(56);
-      else if(w >= 720)  setCardWidth(52);
-      else               setCardWidth(48);
-      return;
+      grid.classList.add("gt");
+      chainBox.style.display = "block";
+    } else if(mode === "9"){
+      grid.classList.add("nine");
+      chainBox.style.display = "none";
+    } else {
+      // 1/2/3: 한 줄에 보이게
+      const n = Number(mode);
+      grid.style.gridTemplateColumns = `repeat(${n}, minmax(var(--cardW), 1fr))`;
+      chainBox.style.display = "none";
     }
-
-    if(mode === "9"){
-      // 9카드도 “한 화면” 기준으로 더 작게
-      if(w >= 1600) setCardWidth(88);
-      else if(w >= 1400) setCardWidth(82);
-      else if(w >= 1200) setCardWidth(76);
-      else if(w >= 980)  setCardWidth(70);
-      else if(w >= 720)  setCardWidth(64);
-      else               setCardWidth(58);
-      return;
-    }
-
-    // 1/2/3카드도 “너무 큼” 방지용으로 확 줄임
-    if(w >= 1600) setCardWidth(92);
-    else if(w >= 1400) setCardWidth(86);
-    else if(w >= 1200) setCardWidth(80);
-    else if(w >= 980)  setCardWidth(72);
-    else if(w >= 720)  setCardWidth(66);
-    else               setCardWidth(58);
   }
 
-  const Q_KEY = "navikipper_question_v1";
-  function loadQuestion(){
-    const v = localStorage.getItem(Q_KEY) || "";
-    qInput.value = v;
-  }
-  function saveQuestion(){
-    localStorage.setItem(Q_KEY, qInput.value.trim());
-  }
-  function clearQuestion(){
-    qInput.value = "";
-    localStorage.removeItem(Q_KEY);
-  }
+  // 질문 저장
+  const Q_KEY = "navikipper_question_v2";
+  function loadQuestion(){ qInput.value = localStorage.getItem(Q_KEY) || ""; }
+  function saveQuestion(){ localStorage.setItem(Q_KEY, qInput.value.trim()); }
+  function clearQuestion(){ qInput.value = ""; localStorage.removeItem(Q_KEY); }
+
   btnSaveQuestion.addEventListener("click", saveQuestion);
   btnClearQuestion.addEventListener("click", clearQuestion);
   qInput.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter"){
-      e.preventDefault();
-      saveQuestion();
-    }
+    if(e.key === "Enter"){ e.preventDefault(); saveQuestion(); }
   });
 
+  // Modal
   function openModal(cardNo, extraLine=""){
     const info = CARD_INFO[cardNo] || { ko:"(정보 없음)", en:"", kw:[] };
     modalImg.src = imgSrc(cardNo);
@@ -588,10 +635,10 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  function createCardEl(cardNo, label){
+  // 렌더
+  function createCardEl(cardNo, label, onClick){
     const el = document.createElement("div");
     el.className = "card";
-    el.dataset.card = String(cardNo);
 
     const img = document.createElement("img");
     img.src = imgSrc(cardNo);
@@ -604,18 +651,17 @@
     el.appendChild(img);
     el.appendChild(badge);
 
-    el.addEventListener("click", ()=>{
-      if(mode !== "gt") openModal(cardNo);
-    });
-
+    el.addEventListener("click", onClick);
     return el;
   }
 
   function clearStageOnly(){
     grid.innerHTML = "";
     chainRow.innerHTML = "";
-    chainBox.style.display = "none";
+    chainTitle.textContent = "체인";
+    chainMeta.textContent = "";
     gt = null;
+    if(mode !== "gt") chainBox.style.display = "none";
   }
 
   function setMode(newMode){
@@ -625,22 +671,22 @@
       b.classList.toggle("active", b.dataset.mode === mode);
     });
 
-    grid.className = "grid";
-    if(mode === "9") grid.classList.add("nine");
-    else if(mode === "gt") grid.classList.add("gt");
-    else grid.classList.add("basic");
-
-    applyResponsiveCardSize();
+    applyGridTemplate();
     clearStageOnly();
+
+    // 레이아웃이 바뀌면 카드 크기도 즉시 맞추기
+    requestAnimationFrame(()=> fitCardsToViewport());
   }
 
   function renderBasic(cards){
     grid.innerHTML = "";
     cards.forEach((no, idx)=>{
-      grid.appendChild(createCardEl(no, `${idx+1}`));
+      grid.appendChild(createCardEl(no, `${idx+1}`, ()=> openModal(no)));
     });
+    requestAnimationFrame(()=> fitCardsToViewport());
   }
 
+  // GT: 하우스/체인
   function buildGrandTableau(cards36){
     const cardsByHouse = Array(37).fill(0);
     for(let house=1; house<=36; house++){
@@ -661,6 +707,7 @@
 
       const card = gtState.cardsByHouse[currentHouse];
       chain.push({ house: currentHouse, card });
+
       currentHouse = card;
     }
     return chain;
@@ -692,10 +739,7 @@
       mini.appendChild(img);
       mini.appendChild(badge);
 
-      mini.addEventListener("click", ()=>{
-        openModal(step.card, `체인: H${step.house}`);
-      });
-
+      mini.addEventListener("click", ()=> openModal(step.card, `체인: H${step.house}`));
       chainRow.appendChild(mini);
     });
   }
@@ -709,22 +753,23 @@
 
     for(let house=1; house<=36; house++){
       const cardNo = gtState.cardsByHouse[house];
-      const el = createCardEl(cardNo, `H${house}`);
-      el.dataset.house = String(house);
-
-      el.addEventListener("click", (ev)=>{
+      const el = createCardEl(cardNo, `H${house}`, (ev)=>{
         ev.stopPropagation();
         document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
         el.classList.add("selected");
 
         const chain = buildHouseChain(gtState, house, CHAIN_LEN);
         renderChain(chain);
-
         openModal(cardNo, `하우스 H${house}`);
+
+        // 체인박스가 보이면 그리드 높이가 변할 수 있어서 재맞춤
+        requestAnimationFrame(()=> fitCardsToViewport());
       });
 
       grid.appendChild(el);
     }
+
+    requestAnimationFrame(()=> fitCardsToViewport());
   }
 
   function draw(){
@@ -741,6 +786,7 @@
     renderBasic(take(n));
   }
 
+  // 이벤트
   spreadButtons.addEventListener("click", (e)=>{
     const btn = e.target.closest("button");
     if(!btn) return;
@@ -751,13 +797,16 @@
   btnShuffle.addEventListener("click", ()=> freshDeck());
   btnClear.addEventListener("click", ()=> clearStageOnly());
 
-  window.addEventListener("resize", applyResponsiveCardSize);
+  // 리사이즈 때도 “실측 재계산”
+  window.addEventListener("resize", ()=> requestAnimationFrame(()=> fitCardsToViewport()));
 
+  // 초기화
   (async function init(){
     loadQuestion();
     freshDeck();
-    setMode("1");
     await autoDetectBasePath();
+    setMode("1");
+    draw(); // 첫 화면부터 사이즈 맞춘 상태로 렌더
   })();
 </script>
 </body>
