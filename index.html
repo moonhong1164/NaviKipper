@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KIPPER 카드 뽑기 | 제작 : 월홍🌙</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --text:#eef2ff;
+      --muted: rgba(238,242,255,.7);
+      --line: rgba(255,255,255,.12);
+      --accent:#7c3aed;
+      --accent2:#22c55e;
+      --danger:#ef4444;
+      --shadow: 0 14px 50px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 22px;
+      --max: 1100px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      background: radial-gradient(1200px 500px at 30% 10%, rgba(124,58,237,.35), transparent 60%),
+                  radial-gradient(900px 420px at 75% 0%, rgba(34,197,94,.18), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 22px 16px 40px;
+    }
+    header{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 8px 10px;
+    }
+    .title{display:flex; flex-direction:column; gap:6px;}
+    h1{margin:0; font-size:24px; letter-spacing:-.2px;}
+    .sub{margin:0; color:var(--muted); font-size:13px; line-height:1.35;}
+
+    .bar{
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .seg{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+
+    button{
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 999px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      font-weight: 650;
+      font-size: 13px;
+      letter-spacing: -.1px;
+      user-select:none;
+    }
+    button:hover{ background: rgba(255,255,255,.09); }
+    button:active{ transform: scale(.98); }
+    button.primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(124,58,237,.55));
+      border-color: rgba(124,58,237,.55);
+    }
+    button.ghost{ background: rgba(255,255,255,.04); }
+    button.danger{
+      background: rgba(239,68,68,.18);
+      border-color: rgba(239,68,68,.45);
+    }
+    button.active{
+      outline: 2px solid rgba(124,58,237,.65);
+      border-color: rgba(124,58,237,.65);
+      background: rgba(124,58,237,.18);
+    }
+
+    .rightTools{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .hint{
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 0 4px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      padding: 6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: rgba(238,242,255,.78);
+    }
+    .pill.ok{
+      border-color: rgba(34,197,94,.45);
+      background: rgba(34,197,94,.12);
+    }
+    .pill.bad{
+      border-color: rgba(239,68,68,.45);
+      background: rgba(239,68,68,.12);
+    }
+
+    .stage{
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      overflow:hidden;
+    }
+
+    /* 기본(1~3/2카드) */
+    .grid{
+      display:grid;
+      gap: 10px;
+      justify-content:center;
+      align-items:start;
+    }
+    .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(120px, 120px)); }
+
+    /* 9카드 3x3 */
+    .grid.nine{ grid-template-columns: repeat(3, minmax(110px, 130px)); }
+
+    /* GT 9x4 */
+    .grid.gt{
+      grid-template-columns: repeat(9, minmax(78px, 1fr));
+      gap: 8px;
+    }
+
+    .card{
+      position:relative;
+      border-radius: 14px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      cursor:pointer;
+      transition: transform .12s ease, border-color .15s ease, background .15s ease;
+      aspect-ratio: 3 / 5;
+      max-width: 140px;
+      width: 100%;
+      justify-self:center;
+    }
+    .card:hover{ transform: translateY(-2px); border-color: rgba(124,58,237,.55); }
+    .card.selected{
+      outline: 3px solid rgba(34,197,94,.7);
+      border-color: rgba(34,197,94,.7);
+    }
+    .card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .badge{
+      position:absolute;
+      top:8px; left:8px;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.18);
+      color: rgba(255,255,255,.92);
+      backdrop-filter: blur(6px);
+    }
+
+    /* 체인 */
+    .chainBox{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+    }
+    .chainTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .chainTitle{
+      margin:0;
+      font-size: 14px;
+      font-weight: 850;
+      letter-spacing: -.1px;
+    }
+    .chainMeta{
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .chainRow{
+      display:flex;
+      gap:10px;
+      overflow:auto;
+      padding-bottom: 6px;
+    }
+    .chainRow::-webkit-scrollbar{ height:8px; }
+    .chainRow::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.14); border-radius: 999px; }
+
+    .mini{
+      width: 92px;
+      min-width: 92px;
+      aspect-ratio: 3/5;
+      border-radius: 14px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      position:relative;
+    }
+    .mini img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .mini .badge{ top:6px; left:6px; font-size: 10px; padding: 5px 7px; }
+
+    footer{
+      margin-top: 18px;
+      text-align:center;
+      color: rgba(238,242,255,.6);
+      font-size: 12px;
+      padding: 10px 0 0;
+    }
+
+    /* 반응형: 9열은 모바일에서 줄이기 */
+    @media (max-width: 980px){
+      .grid.gt{ grid-template-columns: repeat(6, minmax(78px, 1fr)); }
+    }
+    @media (max-width: 640px){
+      .grid.gt{ grid-template-columns: repeat(4, minmax(78px, 1fr)); }
+      header{ flex-direction:column; align-items:flex-start; }
+      .grid.nine{ grid-template-columns: repeat(3, minmax(86px, 1fr)); }
+      .card{ max-width: 120px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <h1>키퍼 카드 뽑기</h1>
+        <p class="sub">
+          1/2/3/9카드 · 그랑타블로(9×4).<br/>
+          <b>그랑타블로에서 카드 클릭</b> → <b>체인 자동 생성</b>
+        </p>
+      </div>
+      <div class="rightTools">
+        <button class="ghost" id="btnRescan">이미지 경로 재탐색</button>
+        <button class="ghost" id="btnShuffle">새로 섞기</button>
+        <button class="danger" id="btnClear">초기화</button>
+      </div>
+    </header>
+
+    <section class="bar">
+      <div class="controls">
+        <div class="seg" id="spreadButtons">
+          <button data-mode="1" class="active">1카드</button>
+          <button data-mode="2">2카드</button>
+          <button data-mode="3">3카드</button>
+          <button data-mode="9">9카드</button>
+          <button data-mode="gt">그랑타블로(9×4)</button>
+        </div>
+
+        <div class="seg">
+          <button class="primary" id="btnDraw">뽑기</button>
+        </div>
+      </div>
+
+      <div class="hint" id="hint">
+        <span class="pill" id="pathPill">이미지 경로 탐색 중…</span>
+        <span class="pill" id="filePill">파일명: 키퍼-001.png ~ 키퍼-036.png</span>
+        <span class="pill" id="modePill">현재 모드: 1카드</span>
+      </div>
+    </section>
+
+    <section class="stage" id="stage">
+      <div class="grid basic" id="grid"></div>
+
+      <div class="chainBox" id="chainBox" style="display:none">
+        <div class="chainTop">
+          <h3 class="chainTitle" id="chainTitle">체인</h3>
+          <div class="chainMeta" id="chainMeta">그랑타블로에서 카드를 클릭하면 체인이 생성됩니다.</div>
+        </div>
+        <div class="chainRow" id="chainRow"></div>
+      </div>
+    </section>
+
+    <footer>제작 : 월홍🌙</footer>
+  </div>
+
+<script>
+  // =========================================
+  // 1) 이미지 파일명/경로 자동탐색 설정
+  // =========================================
+  const TOTAL = 36;                 // 키퍼 36장
+  const FILE_PREFIX = "키퍼-";      // 파일명 접두사
+  const DIGITS = 3;                 // 001~036
+  const EXT = "png";                // 확장자
+
+  // "아무데나 넣어둬도" 최대한 찾도록 후보 경로들(많이 깔아둠)
+  // 네가 img 폴더 이름을 다르게 해도, 여기에 후보 추가 가능.
+  const BASE_PATH_CANDIDATES = [
+    "",                 // 같은 폴더
+    "img/", "images/", "image/", "assets/", "asset/",
+    "cards/", "card/", "kipper/", "Kipper/", "KIPPER/",
+    "img/kipper/", "images/kipper/", "assets/kipper/",
+    "assets/img/", "assets/images/", "static/", "public/",
+    "./", "../", "../img/", "../images/", "../assets/",
+  ];
+
+  // =========================================
+  // 2) 상태
+  // =========================================
+  let mode = "1";                  // "1","2","3","9","gt"
+  let deck = [];                   // 1..36
+  let drawn = [];
+  let gtLayout = null;
+  let basePath = null;             // 자동으로 찾아낸 경로(예: "img/")
+
+  const CHAIN_LEN = 7;             // 체인 길이(원하면 수정)
+
+  // =========================================
+  // 3) DOM
+  // =========================================
+  const grid = document.getElementById("grid");
+  const spreadButtons = document.getElementById("spreadButtons");
+  const btnDraw = document.getElementById("btnDraw");
+  const btnShuffle = document.getElementById("btnShuffle");
+  const btnClear = document.getElementById("btnClear");
+  const btnRescan = document.getElementById("btnRescan");
+
+  const chainBox = document.getElementById("chainBox");
+  const chainRow = document.getElementById("chainRow");
+  const chainTitle = document.getElementById("chainTitle");
+  const chainMeta = document.getElementById("chainMeta");
+
+  const pathPill = document.getElementById("pathPill");
+  const modePill = document.getElementById("modePill");
+
+  // =========================================
+  // 4) 유틸
+  // =========================================
+  function pad(n, digits){
+    const s = String(n);
+    return s.length >= digits ? s : "0".repeat(digits - s.length) + s;
+  }
+  function fileName(cardNo){
+    return `${FILE_PREFIX}${pad(cardNo, DIGITS)}.${EXT}`;
+  }
+  function imgSrc(cardNo){
+    const bp = basePath ?? "";
+    return `${bp}${fileName(cardNo)}`;
+  }
+
+  function shuffle(arr){
+    for(let i=arr.length-1; i>0; i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  function freshDeck(){
+    deck = Array.from({length: TOTAL}, (_,i)=>i+1);
+    shuffle(deck);
+  }
+  function take(n){
+    if(deck.length < n) freshDeck();
+    return deck.splice(0,n);
+  }
+
+  // 이미지 존재 여부 체크 (HEAD가 막히는 경우가 있어 Image() 로 검사)
+  function checkImage(url){
+    return new Promise((resolve)=>{
+      const img = new Image();
+      img.onload = ()=> resolve(true);
+      img.onerror = ()=> resolve(false);
+      img.src = url + (url.includes("?") ? "" : `?v=${Date.now()}`); // 캐시 회피
+    });
+  }
+
+  async function autoDetectBasePath(){
+    pathPill.textContent = "이미지 경로 탐색 중…";
+    pathPill.className = "pill";
+
+    // 기준 샘플: 001.png 가 존재하는 경로를 찾기
+    const sample = fileName(1);
+
+    for(const p of BASE_PATH_CANDIDATES){
+      const url = `${p}${sample}`;
+      const ok = await checkImage(url);
+      if(ok){
+        basePath = p;
+        pathPill.textContent = `이미지 경로 OK: "${basePath}"`;
+        pathPill.className = "pill ok";
+        return true;
+      }
+    }
+
+    basePath = ""; // fallback
+    pathPill.textContent = `이미지 경로를 못 찾았어요 (재탐색 버튼 / 폴더명 확인)`;
+    pathPill.className = "pill bad";
+    return false;
+  }
+
+  // =========================================
+  // 5) 렌더
+  // =========================================
+  function createCardEl(cardNo, indexLabel){
+    const el = document.createElement("div");
+    el.className = "card";
+    el.dataset.card = String(cardNo);
+
+    const img = document.createElement("img");
+    img.src = imgSrc(cardNo);
+    img.alt = `Card ${cardNo}`;
+
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = indexLabel;
+
+    el.appendChild(img);
+    el.appendChild(badge);
+    return el;
+  }
+
+  function clearStageOnly(){
+    grid.innerHTML = "";
+    drawn = [];
+    gtLayout = null;
+  }
+
+  function setMode(newMode){
+    mode = newMode;
+
+    [...spreadButtons.querySelectorAll("button")].forEach(b=>{
+      b.classList.toggle("active", b.dataset.mode === mode);
+    });
+
+    const nameMap = { "1":"1카드", "2":"2카드", "3":"3카드", "9":"9카드", "gt":"그랑타블로(9×4)" };
+    modePill.textContent = `현재 모드: ${nameMap[mode]}`;
+
+    grid.className = "grid";
+    chainBox.style.display = "none";
+    chainRow.innerHTML = "";
+    chainTitle.textContent = "체인";
+    chainMeta.textContent = "그랑타블로에서 카드를 클릭하면 체인이 생성됩니다.";
+
+    if(mode === "9"){
+      grid.classList.add("nine");
+    }else if(mode === "gt"){
+      grid.classList.add("gt");
+    }else{
+      grid.classList.add("basic");
+    }
+
+    clearStageOnly();
+  }
+
+  function renderBasic(cards){
+    grid.innerHTML = "";
+    cards.forEach((no, idx)=>{
+      const el = createCardEl(no, `${idx+1}`);
+      grid.appendChild(el);
+    });
+  }
+
+  // =========================================
+  // 6) 그랑타블로 9x4 + 체인
+  // =========================================
+  function buildGtPositions(cards36){
+    // 9 columns x 4 rows = 36
+    const all = [];
+    for(let i=0;i<36;i++){
+      const r = Math.floor(i/9);
+      const c = i%9;
+      all.push({ card: cards36[i], r, c, idx:i });
+    }
+    const posMap = new Map();
+    all.forEach(p=>posMap.set(`${p.r},${p.c}`, p));
+    return { all, posMap };
+  }
+
+  function neighborsOf(p, layout){
+    // 8방향
+    const dirs = [
+      [-1,-1],[-1,0],[-1,1],
+      [0,-1],[0,1],
+      [1,-1],[1,0],[1,1],
+    ];
+    const result = [];
+    for(const [dr,dc] of dirs){
+      const key = `${p.r+dr},${p.c+dc}`;
+      if(layout.posMap.has(key)) result.push(layout.posMap.get(key));
+    }
+    return result;
+  }
+
+  function renderGrandTableau(layout){
+    grid.innerHTML = "";
+    layout.all.forEach((p, i)=>{
+      const label = `${i+1}`;
+      const el = createCardEl(p.card, label);
+      el.dataset.r = p.r;
+      el.dataset.c = p.c;
+      el.addEventListener("click", ()=> onGtCardClick(p, layout, el));
+      grid.appendChild(el);
+    });
+
+    chainBox.style.display = "block";
+    chainRow.innerHTML = "";
+    chainMeta.textContent = `그랑타블로의 아무 카드나 눌러보세요. (체인 길이: ${CHAIN_LEN})`;
+  }
+
+  function onGtCardClick(startPos, layout, clickedEl){
+    document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
+    clickedEl.classList.add("selected");
+
+    const chain = buildChainFrom(startPos, layout, CHAIN_LEN);
+    renderChain(startPos, chain);
+  }
+
+  function buildChainFrom(startPos, layout, len){
+    const used = new Set([startPos.card]);
+    const path = [startPos];
+
+    while(path.length < len){
+      const cur = path[path.length - 1];
+      const nbs = neighborsOf(cur, layout).filter(p=>!used.has(p.card));
+
+      if(nbs.length === 0){
+        // 막히면 점프(미사용 카드 중 랜덤)
+        const allLeft = layout.all.filter(p=>!used.has(p.card));
+        if(allLeft.length === 0) break;
+        const nxt = allLeft[Math.floor(Math.random()*allLeft.length)];
+        used.add(nxt.card);
+        path.push(nxt);
+        continue;
+      }
+      const nxt = nbs[Math.floor(Math.random()*nbs.length)];
+      used.add(nxt.card);
+      path.push(nxt);
+    }
+    return path;
+  }
+
+  function renderChain(startPos, chainPath){
+    chainRow.innerHTML = "";
+    chainTitle.textContent = `체인 (시작: ${fileName(startPos.card)})`;
+    chainMeta.textContent = `클릭한 카드 기준으로 연결을 생성했어요. (길이 ${chainPath.length})`;
+
+    chainPath.forEach((p, idx)=>{
+      const mini = document.createElement("div");
+      mini.className = "mini";
+
+      const img = document.createElement("img");
+      img.src = imgSrc(p.card);
+      img.alt = `Chain ${p.card}`;
+
+      const badge = document.createElement("div");
+      badge.className = "badge";
+      badge.textContent = idx === 0 ? "START" : String(idx+1);
+
+      mini.appendChild(img);
+      mini.appendChild(badge);
+      chainRow.appendChild(mini);
+    });
+  }
+
+  // =========================================
+  // 7) 뽑기
+  // =========================================
+  function draw(){
+    clearStageOnly();
+
+    if(mode === "gt"){
+      const cards = take(36);
+      gtLayout = buildGtPositions(cards);
+      renderGrandTableau(gtLayout);
+      return;
+    }
+
+    const n = Number(mode);
+    drawn = take(n);
+    renderBasic(drawn);
+  }
+
+  // =========================================
+  // 8) 이벤트
+  // =========================================
+  spreadButtons.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    setMode(btn.dataset.mode);
+  });
+
+  btnDraw.addEventListener("click", draw);
+
+  btnShuffle.addEventListener("click", ()=>{
+    freshDeck();
+  });
+
+  btnClear.addEventListener("click", ()=>{
+    clearStageOnly();
+    chainRow.innerHTML = "";
+    chainBox.style.display = (mode==="gt") ? "block" : "none";
+  });
+
+  btnRescan.addEventListener("click", async ()=>{
+    await autoDetectBasePath();
+    // 이미 그려진 카드가 있다면 이미지 src 갱신
+    document.querySelectorAll(".card img, .mini img").forEach(img=>{
+      const parent = img.closest(".card, .mini");
+      if(!parent) return;
+      const cardEl = img.closest(".card");
+      if(cardEl){
+        const cardNo = Number(cardEl.dataset.card || "0");
+        if(cardNo) img.src = imgSrc(cardNo);
+      }else{
+        // mini는 alt에서 번호를 못 얻으니 그냥 전체 체인을 재생성하지 않고 둠
+        // (대신 바로 뽑기/클릭하면 새로 갱신됨)
+      }
+    });
+  });
+
+  // =========================================
+  // 9) 초기화
+  // =========================================
+  (async function init(){
+    freshDeck();
+    setMode("1");
+    await autoDetectBasePath();
+  })();
+</script>
+</body>
+</html>
