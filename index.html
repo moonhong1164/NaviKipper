@@ -6,40 +6,41 @@
   <title>KIPPER 카드 뽑기 | 제작 : 월홍🌙</title>
   <style>
     :root{
-      --bg:#0b1020;
+      /* ===== Mint Theme ===== */
+      --bg:#06121a;
       --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.09);
-      --text:#eef2ff;
-      --muted: rgba(238,242,255,.7);
-      --line: rgba(255,255,255,.12);
-      --accent:#7c3aed;
-      --accent2:#22c55e;
-      --danger:#ef4444;
-      --shadow: 0 14px 50px rgba(0,0,0,.45);
+      --panel2: rgba(255,255,255,.10);
+      --text:#eafffb;
+      --muted: rgba(234,255,251,.72);
+      --line: rgba(255,255,255,.14);
+
+      --accent:#2dd4bf;     /* mint */
+      --accent2:#34d399;    /* mint-green */
+      --danger:#fb7185;
+
+      --shadow: 0 14px 50px rgba(0,0,0,.48);
       --radius: 18px;
       --radius2: 22px;
       --max: 1100px;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
-      background: radial-gradient(1200px 500px at 30% 10%, rgba(124,58,237,.35), transparent 60%),
-                  radial-gradient(900px 420px at 75% 0%, rgba(34,197,94,.18), transparent 60%),
-                  var(--bg);
+      background:
+        radial-gradient(1100px 520px at 25% 10%, rgba(45,212,191,.35), transparent 60%),
+        radial-gradient(900px 460px at 75% 0%, rgba(52,211,153,.22), transparent 60%),
+        radial-gradient(900px 520px at 70% 85%, rgba(45,212,191,.14), transparent 60%),
+        var(--bg);
       color:var(--text);
     }
-    .wrap{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 22px 16px 40px;
-    }
+
+    .wrap{max-width: var(--max); margin: 0 auto; padding: 22px 16px 40px;}
+
     header{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:12px;
-      padding: 14px 8px 10px;
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:12px; padding: 14px 8px 10px;
     }
     .title{display:flex; flex-direction:column; gap:6px;}
     h1{margin:0; font-size:24px; letter-spacing:-.2px;}
@@ -54,11 +55,8 @@
       padding: 14px;
     }
     .controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
+      display:flex; flex-wrap:wrap; gap:10px;
+      align-items:center; justify-content:space-between;
     }
     .seg{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
 
@@ -70,35 +68,29 @@
       border-radius: 999px;
       cursor:pointer;
       transition: transform .08s ease, background .15s ease, border-color .15s ease;
-      font-weight: 650;
+      font-weight: 750;
       font-size: 13px;
       letter-spacing: -.1px;
       user-select:none;
     }
-    button:hover{ background: rgba(255,255,255,.09); }
+    button:hover{ background: rgba(255,255,255,.10); }
     button:active{ transform: scale(.98); }
     button.primary{
-      background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(124,58,237,.55));
-      border-color: rgba(124,58,237,.55);
+      background: linear-gradient(135deg, rgba(45,212,191,.92), rgba(45,212,191,.55));
+      border-color: rgba(45,212,191,.60);
     }
     button.ghost{ background: rgba(255,255,255,.04); }
     button.danger{
-      background: rgba(239,68,68,.18);
-      border-color: rgba(239,68,68,.45);
+      background: rgba(251,113,133,.18);
+      border-color: rgba(251,113,133,.45);
     }
     button.active{
-      outline: 2px solid rgba(124,58,237,.65);
-      border-color: rgba(124,58,237,.65);
-      background: rgba(124,58,237,.18);
+      outline: 2px solid rgba(45,212,191,.65);
+      border-color: rgba(45,212,191,.65);
+      background: rgba(45,212,191,.18);
     }
 
-    .rightTools{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+    .rightTools{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
 
     .hint{
       margin-top: 10px;
@@ -106,10 +98,7 @@
       font-size: 12px;
       line-height: 1.4;
       padding: 0 4px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
     }
     .pill{
       border:1px solid var(--line);
@@ -117,16 +106,10 @@
       padding: 6px 10px;
       border-radius:999px;
       font-size:12px;
-      color: rgba(238,242,255,.78);
+      color: rgba(234,255,251,.80);
     }
-    .pill.ok{
-      border-color: rgba(34,197,94,.45);
-      background: rgba(34,197,94,.12);
-    }
-    .pill.bad{
-      border-color: rgba(239,68,68,.45);
-      background: rgba(239,68,68,.12);
-    }
+    .pill.ok{ border-color: rgba(52,211,153,.55); background: rgba(52,211,153,.12); }
+    .pill.bad{ border-color: rgba(251,113,133,.55); background: rgba(251,113,133,.12); }
 
     .stage{
       margin-top: 14px;
@@ -138,29 +121,16 @@
       overflow:hidden;
     }
 
-    /* 기본(1~3/2카드) */
-    .grid{
-      display:grid;
-      gap: 10px;
-      justify-content:center;
-      align-items:start;
-    }
+    .grid{display:grid; gap: 10px; justify-content:center; align-items:start;}
     .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(120px, 120px)); }
-
-    /* 9카드 3x3 */
     .grid.nine{ grid-template-columns: repeat(3, minmax(110px, 130px)); }
-
-    /* GT 9x4 */
-    .grid.gt{
-      grid-template-columns: repeat(9, minmax(78px, 1fr));
-      gap: 8px;
-    }
+    .grid.gt{ grid-template-columns: repeat(9, minmax(78px, 1fr)); gap: 8px; }
 
     .card{
       position:relative;
       border-radius: 14px;
       overflow:hidden;
-      border: 1px solid rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.04);
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
       cursor:pointer;
@@ -170,31 +140,27 @@
       width: 100%;
       justify-self:center;
     }
-    .card:hover{ transform: translateY(-2px); border-color: rgba(124,58,237,.55); }
+    .card:hover{ transform: translateY(-2px); border-color: rgba(45,212,191,.70); }
     .card.selected{
-      outline: 3px solid rgba(34,197,94,.7);
-      border-color: rgba(34,197,94,.7);
+      outline: 3px solid rgba(52,211,153,.78);
+      border-color: rgba(52,211,153,.78);
     }
-    .card img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
+    .card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
     .badge{
       position:absolute;
       top:8px; left:8px;
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 900;
       padding: 6px 8px;
       border-radius: 999px;
       background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.20);
       color: rgba(255,255,255,.92);
       backdrop-filter: blur(6px);
     }
 
-    /* 체인 */
+    /* ===== Chain ===== */
     .chainBox{
       margin-top: 14px;
       padding: 14px;
@@ -203,35 +169,17 @@
       border: 1px solid var(--line);
     }
     .chainTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom: 10px;
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:10px; flex-wrap:wrap; margin-bottom: 10px;
     }
-    .chainTitle{
-      margin:0;
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: -.1px;
-    }
-    .chainMeta{
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .chainRow{
-      display:flex;
-      gap:10px;
-      overflow:auto;
-      padding-bottom: 6px;
-    }
+    .chainTitle{margin:0; font-size: 14px; font-weight: 900; letter-spacing: -.1px;}
+    .chainMeta{color: var(--muted); font-size: 12px; line-height:1.35;}
+    .chainRow{display:flex; gap:10px; overflow:auto; padding-bottom: 6px;}
     .chainRow::-webkit-scrollbar{ height:8px; }
     .chainRow::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.14); border-radius: 999px; }
 
     .mini{
-      width: 92px;
-      min-width: 92px;
+      width: 92px; min-width: 92px;
       aspect-ratio: 3/5;
       border-radius: 14px;
       overflow:hidden;
@@ -243,23 +191,98 @@
     .mini img{ width:100%; height:100%; object-fit:cover; display:block; }
     .mini .badge{ top:6px; left:6px; font-size: 10px; padding: 5px 7px; }
 
+    /* ===== Modal ===== */
+    .modalBackdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 9999;
+    }
+    .modal{
+      width:min(920px, 100%);
+      border-radius: 22px;
+      background: rgba(9, 24, 33, .92);
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 20px 70px rgba(0,0,0,.55);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .modalInner{
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      gap: 14px;
+      padding: 14px;
+      align-items:start;
+    }
+    .modalPreview{
+      border-radius: 18px;
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      aspect-ratio: 3/5;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .modalPreview img{width:100%; height:100%; object-fit:cover; display:block;}
+    .modalHeader{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom: 8px;
+    }
+    .modalTitle{
+      margin:0;
+      font-size: 16px;
+      font-weight: 950;
+      letter-spacing: -.2px;
+      line-height: 1.25;
+    }
+    .modalSub{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .chipRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+    .chip{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(45,212,191,.45);
+      background: rgba(45,212,191,.10);
+      color: rgba(234,255,251,.92);
+      font-weight: 750;
+    }
+    .modalFooter{
+      padding: 10px 14px 14px;
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+
     footer{
       margin-top: 18px;
       text-align:center;
-      color: rgba(238,242,255,.6);
+      color: rgba(234,255,251,.62);
       font-size: 12px;
       padding: 10px 0 0;
     }
 
-    /* 반응형: 9열은 모바일에서 줄이기 */
     @media (max-width: 980px){
       .grid.gt{ grid-template-columns: repeat(6, minmax(78px, 1fr)); }
+    }
+    @media (max-width: 720px){
+      .modalInner{ grid-template-columns: 140px 1fr; }
     }
     @media (max-width: 640px){
       .grid.gt{ grid-template-columns: repeat(4, minmax(78px, 1fr)); }
       header{ flex-direction:column; align-items:flex-start; }
       .grid.nine{ grid-template-columns: repeat(3, minmax(86px, 1fr)); }
       .card{ max-width: 120px; }
+      .modalInner{ grid-template-columns: 1fr; }
+      .modalPreview{ width: 170px; }
     }
   </style>
 </head>
@@ -271,7 +294,7 @@
         <h1>키퍼 카드 뽑기</h1>
         <p class="sub">
           1/2/3/9카드 · 그랑타블로(9×4).<br/>
-          <b>그랑타블로에서 카드 클릭</b> → <b>체인 자동 생성</b>
+          <b>그랑타블로: 카드 클릭 → 하우스 체인 생성</b> + 카드명/키워드 표시
         </p>
       </div>
       <div class="rightTools">
@@ -308,8 +331,15 @@
 
       <div class="chainBox" id="chainBox" style="display:none">
         <div class="chainTop">
-          <h3 class="chainTitle" id="chainTitle">체인</h3>
-          <div class="chainMeta" id="chainMeta">그랑타블로에서 카드를 클릭하면 체인이 생성됩니다.</div>
+          <div>
+            <h3 class="chainTitle" id="chainTitle">체인</h3>
+            <div class="chainMeta" id="chainMeta">
+              그랑타블로에서 카드를 클릭하면 체인이 생성됩니다.
+            </div>
+          </div>
+          <div class="seg">
+            <button class="ghost" id="btnChainLen">체인 길이: 8</button>
+          </div>
         </div>
         <div class="chainRow" id="chainRow"></div>
       </div>
@@ -318,39 +348,101 @@
     <footer>제작 : 월홍🌙</footer>
   </div>
 
+  <!-- Modal -->
+  <div class="modalBackdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalInner">
+        <div class="modalPreview">
+          <img id="modalImg" alt="card preview" />
+        </div>
+        <div>
+          <div class="modalHeader">
+            <div>
+              <h2 class="modalTitle" id="modalTitle">카드 정보</h2>
+              <p class="modalSub" id="modalSub">—</p>
+            </div>
+            <button class="ghost" id="btnCloseModal">닫기</button>
+          </div>
+          <div class="chipRow" id="modalChips"></div>
+        </div>
+      </div>
+      <div class="modalFooter">
+        <button class="primary" id="btnOkModal">확인</button>
+      </div>
+    </div>
+  </div>
+
 <script>
   // =========================================
-  // 1) 이미지 파일명/경로 자동탐색 설정
+  // 이미지 파일명/경로 자동탐색
   // =========================================
-  const TOTAL = 36;                 // 키퍼 36장
-  const FILE_PREFIX = "키퍼-";      // 파일명 접두사
-  const DIGITS = 3;                 // 001~036
-  const EXT = "png";                // 확장자
+  const TOTAL = 36;
+  const FILE_PREFIX = "키퍼-";
+  const DIGITS = 3;
+  const EXT = "png";
 
-  // "아무데나 넣어둬도" 최대한 찾도록 후보 경로들(많이 깔아둠)
-  // 네가 img 폴더 이름을 다르게 해도, 여기에 후보 추가 가능.
   const BASE_PATH_CANDIDATES = [
-    "",                 // 같은 폴더
-    "img/", "images/", "image/", "assets/", "asset/",
+    "", "./", "img/", "images/", "image/", "assets/", "asset/",
     "cards/", "card/", "kipper/", "Kipper/", "KIPPER/",
     "img/kipper/", "images/kipper/", "assets/kipper/",
     "assets/img/", "assets/images/", "static/", "public/",
-    "./", "../", "../img/", "../images/", "../assets/",
+    "../", "../img/", "../images/", "../assets/",
   ];
 
   // =========================================
-  // 2) 상태
+  // Kipper 카드명/키워드 (번호는 Stefan's Cards 기준) :contentReference[oaicite:1]{index=1}
   // =========================================
-  let mode = "1";                  // "1","2","3","9","gt"
-  let deck = [];                   // 1..36
-  let drawn = [];
-  let gtLayout = null;
-  let basePath = null;             // 자동으로 찾아낸 경로(예: "img/")
-
-  const CHAIN_LEN = 7;             // 체인 길이(원하면 수정)
+  const CARD_INFO = {
+    1: { en:"Main significator, Male", ko:"주요 인물(남성)", kw:["본인/상대 남성","주인공","중심 인물"] },
+    2: { en:"Main significator, Female", ko:"주요 인물(여성)", kw:["본인/상대 여성","주인공","중심 인물"] },
+    3: { en:"State of marriage", ko:"결혼/관계 상태", kw:["공식 관계","계약/약속","유대감"] },
+    4: { en:"Meeting", ko:"만남/모임", kw:["소개","약속","사교/네트워킹"] },
+    5: { en:"Good gentleman", ko:"성숙한 남성(좋은 신사)", kw:["멘토/상사","안정감","신뢰"] },
+    6: { en:"Good lady", ko:"성숙한 여성(좋은 숙녀)", kw:["보호/배려","성숙함","호의"] },
+    7: { en:"Letter", ko:"편지/연락", kw:["메시지","소식","문서"] },
+    8: { en:"False person", ko:"거짓된 사람", kw:["가면","속임수","진실 확인"] },
+    9: { en:"Change", ko:"변화", kw:["전환점","상황 변동","흐름 이동"] },
+    10:{ en:"Journey", ko:"여행/이동", kw:["출장/이사","거리","방향 전환"] },
+    11:{ en:"Win lots of money", ko:"큰 돈/수익", kw:["당첨/보너스","수입 증가","재정 호재"] },
+    12:{ en:"Rich girl", ko:"부유한 여성/혜택", kw:["특권","지원","풍요"] },
+    13:{ en:"Young good lord", ko:"젊은 남성/유능한 사람", kw:["능력","기회","핵심 인물"] },
+    14:{ en:"Sad news", ko:"나쁜 소식", kw:["실망","불리한 통보","경고"] },
+    15:{ en:"Good outcome in love", ko:"사랑의 좋은 결과", kw:["호감","관계 진전","성공"] },
+    16:{ en:"His thoughts", ko:"생각/속마음", kw:["계획","관심","고민"] },
+    17:{ en:"Receive a gift", ko:"선물/제안", kw:["지원","호의","기회 제시"] },
+    18:{ en:"A small child", ko:"아이/초기 단계", kw:["새 출발","순수","성장"] },
+    19:{ en:"Fatality", ko:"운명/종결", kw:["결정적 사건","마무리","피할 수 없는 흐름"] },
+    20:{ en:"House", ko:"집/가정", kw:["거처","안정","가족 기반"] },
+    21:{ en:"Living room", ko:"가족/공간(거실)", kw:["가정사","생활","친밀한 영역"] },
+    22:{ en:"Military person", ko:"군인/공권력", kw:["규율","공식 기관","강경함"] },
+    23:{ en:"Court of law", ko:"법정/판단", kw:["평가","결정","공식 절차"] },
+    24:{ en:"Theft", ko:"도난/빼앗김", kw:["손실","누락","주의 필요"] },
+    25:{ en:"High honors", ko:"명예/승진", kw:["인정","성과","격상"] },
+    26:{ en:"Great fortune", ko:"큰 행운", kw:["대성공","좋은 흐름","강한 보호"] },
+    27:{ en:"Unhoped for money", ko:"뜻밖의 돈", kw:["예상 밖 수입","보상","급전"] },
+    28:{ en:"Expectations", ko:"기대/희망", kw:["기다림","전망","목표"] },
+    29:{ en:"Prison", ko:"감금/제약", kw:["막힘","제한","탈출구 필요"] },
+    30:{ en:"Court official", ko:"공무원/중개자", kw:["서류","절차","조율"] },
+    31:{ en:"Short illness", ko:"단기 아픔/휴식", kw:["컨디션 저하","회복","잠깐 멈춤"] },
+    32:{ en:"Sorrow and unpleasantness", ko:"슬픔/불편", kw:["상처","스트레스","불쾌"] },
+    33:{ en:"Gloomy thoughts", ko:"우울한 생각", kw:["불안","비관","마음 관리"] },
+    34:{ en:"Work and occupation", ko:"일/직업", kw:["업무","노력","현실 과제"] },
+    35:{ en:"Long road", ko:"긴 길/장거리", kw:["장기전","멀리 보기","지속"] },
+    36:{ en:"Great water, Hope", ko:"큰 물/희망", kw:["치유","감정의 흐름","희망/영감"] },
+  };
 
   // =========================================
-  // 3) DOM
+  // 상태
+  // =========================================
+  let mode = "1";
+  let deck = [];
+  let basePath = null;
+
+  let gt = null; // { cardsByHouse: number[37], houseByCard: number[37] }
+  let CHAIN_LEN = 8;
+
+  // =========================================
+  // DOM
   // =========================================
   const grid = document.getElementById("grid");
   const spreadButtons = document.getElementById("spreadButtons");
@@ -358,6 +450,7 @@
   const btnShuffle = document.getElementById("btnShuffle");
   const btnClear = document.getElementById("btnClear");
   const btnRescan = document.getElementById("btnRescan");
+  const btnChainLen = document.getElementById("btnChainLen");
 
   const chainBox = document.getElementById("chainBox");
   const chainRow = document.getElementById("chainRow");
@@ -367,8 +460,16 @@
   const pathPill = document.getElementById("pathPill");
   const modePill = document.getElementById("modePill");
 
+  const modalBackdrop = document.getElementById("modalBackdrop");
+  const modalImg = document.getElementById("modalImg");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalSub = document.getElementById("modalSub");
+  const modalChips = document.getElementById("modalChips");
+  const btnCloseModal = document.getElementById("btnCloseModal");
+  const btnOkModal = document.getElementById("btnOkModal");
+
   // =========================================
-  // 4) 유틸
+  // 유틸
   // =========================================
   function pad(n, digits){
     const s = String(n);
@@ -381,7 +482,6 @@
     const bp = basePath ?? "";
     return `${bp}${fileName(cardNo)}`;
   }
-
   function shuffle(arr){
     for(let i=arr.length-1; i>0; i--){
       const j = Math.floor(Math.random()*(i+1));
@@ -398,21 +498,18 @@
     return deck.splice(0,n);
   }
 
-  // 이미지 존재 여부 체크 (HEAD가 막히는 경우가 있어 Image() 로 검사)
   function checkImage(url){
     return new Promise((resolve)=>{
       const img = new Image();
       img.onload = ()=> resolve(true);
       img.onerror = ()=> resolve(false);
-      img.src = url + (url.includes("?") ? "" : `?v=${Date.now()}`); // 캐시 회피
+      img.src = url + (url.includes("?") ? "" : `?v=${Date.now()}`);
     });
   }
 
   async function autoDetectBasePath(){
     pathPill.textContent = "이미지 경로 탐색 중…";
     pathPill.className = "pill";
-
-    // 기준 샘플: 001.png 가 존재하는 경로를 찾기
     const sample = fileName(1);
 
     for(const p of BASE_PATH_CANDIDATES){
@@ -425,15 +522,48 @@
         return true;
       }
     }
-
-    basePath = ""; // fallback
-    pathPill.textContent = `이미지 경로를 못 찾았어요 (재탐색 버튼 / 폴더명 확인)`;
+    basePath = "";
+    pathPill.textContent = `이미지 경로를 못 찾았어요 (재탐색/폴더명 확인)`;
     pathPill.className = "pill bad";
     return false;
   }
 
   // =========================================
-  // 5) 렌더
+  // Modal
+  // =========================================
+  function openModal(cardNo, extraLine=""){
+    const info = CARD_INFO[cardNo] || { ko:"(정보 없음)", en:"", kw:[] };
+    modalImg.src = imgSrc(cardNo);
+    modalTitle.textContent = `${cardNo}. ${info.ko}`;
+    modalSub.textContent = `${info.en}${extraLine ? " · " + extraLine : ""}`;
+
+    modalChips.innerHTML = "";
+    (info.kw || []).forEach(k=>{
+      const chip = document.createElement("span");
+      chip.className = "chip";
+      chip.textContent = k;
+      modalChips.appendChild(chip);
+    });
+
+    modalBackdrop.style.display = "flex";
+    modalBackdrop.setAttribute("aria-hidden","false");
+  }
+  function closeModal(){
+    modalBackdrop.style.display = "none";
+    modalBackdrop.setAttribute("aria-hidden","true");
+  }
+
+  btnCloseModal.addEventListener("click", closeModal);
+  btnOkModal.addEventListener("click", closeModal);
+  modalBackdrop.addEventListener("click", (e)=>{
+    if(e.target === modalBackdrop) closeModal();
+  });
+  window.addEventListener("keydown", (e)=>{
+    if(e.key === "Escape") closeModal();
+  });
+
+  // =========================================
+  // 렌더
   // =========================================
   function createCardEl(cardNo, indexLabel){
     const el = document.createElement("div");
@@ -450,13 +580,21 @@
 
     el.appendChild(img);
     el.appendChild(badge);
+
+    // 공통: 카드 클릭 시 카드명/키워드
+    el.addEventListener("click", ()=>{
+      // GT에서는 체인도 같이 처리하므로, GT 클릭 핸들러에서 openModal을 호출함
+      if(mode !== "gt") openModal(cardNo);
+    });
+
     return el;
   }
 
   function clearStageOnly(){
     grid.innerHTML = "";
-    drawn = [];
-    gtLayout = null;
+    chainRow.innerHTML = "";
+    chainBox.style.display = "none";
+    gt = null;
   }
 
   function setMode(newMode){
@@ -470,18 +608,9 @@
     modePill.textContent = `현재 모드: ${nameMap[mode]}`;
 
     grid.className = "grid";
-    chainBox.style.display = "none";
-    chainRow.innerHTML = "";
-    chainTitle.textContent = "체인";
-    chainMeta.textContent = "그랑타블로에서 카드를 클릭하면 체인이 생성됩니다.";
-
-    if(mode === "9"){
-      grid.classList.add("nine");
-    }else if(mode === "gt"){
-      grid.classList.add("gt");
-    }else{
-      grid.classList.add("basic");
-    }
+    if(mode === "9") grid.classList.add("nine");
+    else if(mode === "gt") grid.classList.add("gt");
+    else grid.classList.add("basic");
 
     clearStageOnly();
   }
@@ -495,127 +624,134 @@
   }
 
   // =========================================
-  // 6) 그랑타블로 9x4 + 체인
+  // 그랑타블로 9x4: 하우스 / 체인
   // =========================================
-  function buildGtPositions(cards36){
-    // 9 columns x 4 rows = 36
-    const all = [];
-    for(let i=0;i<36;i++){
-      const r = Math.floor(i/9);
-      const c = i%9;
-      all.push({ card: cards36[i], r, c, idx:i });
+  function buildGrandTableau(cards36){
+    // house: 1..36 (왼->오, 위->아래)
+    const cardsByHouse = Array(37).fill(0);
+    const houseByCard = Array(37).fill(0);
+
+    for(let house=1; house<=36; house++){
+      const card = cards36[house-1];
+      cardsByHouse[house] = card;
+      houseByCard[card] = house;
     }
-    const posMap = new Map();
-    all.forEach(p=>posMap.set(`${p.r},${p.c}`, p));
-    return { all, posMap };
+    return { cardsByHouse, houseByCard };
   }
 
-  function neighborsOf(p, layout){
-    // 8방향
-    const dirs = [
-      [-1,-1],[-1,0],[-1,1],
-      [0,-1],[0,1],
-      [1,-1],[1,0],[1,1],
-    ];
-    const result = [];
-    for(const [dr,dc] of dirs){
-      const key = `${p.r+dr},${p.c+dc}`;
-      if(layout.posMap.has(key)) result.push(layout.posMap.get(key));
-    }
-    return result;
-  }
-
-  function renderGrandTableau(layout){
+  function renderGrandTableau(gtState){
     grid.innerHTML = "";
-    layout.all.forEach((p, i)=>{
-      const label = `${i+1}`;
-      const el = createCardEl(p.card, label);
-      el.dataset.r = p.r;
-      el.dataset.c = p.c;
-      el.addEventListener("click", ()=> onGtCardClick(p, layout, el));
-      grid.appendChild(el);
-    });
-
     chainBox.style.display = "block";
     chainRow.innerHTML = "";
-    chainMeta.textContent = `그랑타블로의 아무 카드나 눌러보세요. (체인 길이: ${CHAIN_LEN})`;
-  }
+    chainTitle.textContent = "체인 (하우스 기반)";
+    chainMeta.textContent = "카드를 클릭하면: 시작 하우스 → (그 하우스의 카드 번호) 하우스로 이동… 방식으로 체인이 이어집니다.";
 
-  function onGtCardClick(startPos, layout, clickedEl){
-    document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
-    clickedEl.classList.add("selected");
+    for(let house=1; house<=36; house++){
+      const cardNo = gtState.cardsByHouse[house];
+      const el = createCardEl(cardNo, `H${house}`);
+      el.dataset.house = String(house);
 
-    const chain = buildChainFrom(startPos, layout, CHAIN_LEN);
-    renderChain(startPos, chain);
-  }
+      el.addEventListener("click", (ev)=>{
+        // 기본 클릭 모달 방지(중복 방지)
+        ev.stopPropagation();
 
-  function buildChainFrom(startPos, layout, len){
-    const used = new Set([startPos.card]);
-    const path = [startPos];
+        document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
+        el.classList.add("selected");
 
-    while(path.length < len){
-      const cur = path[path.length - 1];
-      const nbs = neighborsOf(cur, layout).filter(p=>!used.has(p.card));
+        // 하우스 기반 체인 생성
+        const startHouse = house;
+        const chain = buildHouseChain(gtState, startHouse, CHAIN_LEN);
+        renderChain(chain);
 
-      if(nbs.length === 0){
-        // 막히면 점프(미사용 카드 중 랜덤)
-        const allLeft = layout.all.filter(p=>!used.has(p.card));
-        if(allLeft.length === 0) break;
-        const nxt = allLeft[Math.floor(Math.random()*allLeft.length)];
-        used.add(nxt.card);
-        path.push(nxt);
-        continue;
-      }
-      const nxt = nbs[Math.floor(Math.random()*nbs.length)];
-      used.add(nxt.card);
-      path.push(nxt);
+        // 카드 정보 모달 (하우스 정보 같이)
+        openModal(cardNo, `하우스 H${house}`);
+      });
+
+      grid.appendChild(el);
     }
-    return path;
   }
 
-  function renderChain(startPos, chainPath){
-    chainRow.innerHTML = "";
-    chainTitle.textContent = `체인 (시작: ${fileName(startPos.card)})`;
-    chainMeta.textContent = `클릭한 카드 기준으로 연결을 생성했어요. (길이 ${chainPath.length})`;
+  function buildHouseChain(gtState, startHouse, len){
+    // 규칙:
+    // 현재 하우스 H에 있는 카드 = C
+    // 다음 하우스 = C (카드 번호)
+    // 반복 (루프 방지: 같은 하우스 재등장 시 중단)
+    const chain = [];
+    const seenHouses = new Set();
 
-    chainPath.forEach((p, idx)=>{
+    let currentHouse = startHouse;
+
+    while(chain.length < len){
+      if(currentHouse < 1 || currentHouse > 36) break;
+      if(seenHouses.has(currentHouse)) break;
+      seenHouses.add(currentHouse);
+
+      const card = gtState.cardsByHouse[currentHouse];
+      chain.push({ house: currentHouse, card });
+
+      const nextHouse = card; // 핵심: 카드 번호를 하우스 번호로
+      currentHouse = nextHouse;
+    }
+
+    return chain;
+  }
+
+  function renderChain(chain){
+    chainRow.innerHTML = "";
+
+    if(chain.length === 0){
+      chainMeta.textContent = "체인을 만들 수 없어요. (데이터 오류)";
+      return;
+    }
+
+    const start = chain[0];
+    chainTitle.textContent = `체인 (시작: H${start.house})`;
+    chainMeta.textContent = `H${start.house}의 카드(${start.card}) → 다음 하우스(H${start.card})… (길이 ${chain.length}, 설정 ${CHAIN_LEN})`;
+
+    chain.forEach((step, idx)=>{
       const mini = document.createElement("div");
       mini.className = "mini";
 
       const img = document.createElement("img");
-      img.src = imgSrc(p.card);
-      img.alt = `Chain ${p.card}`;
+      img.src = imgSrc(step.card);
+      img.alt = `Chain ${step.card}`;
 
       const badge = document.createElement("div");
       badge.className = "badge";
-      badge.textContent = idx === 0 ? "START" : String(idx+1);
+      badge.textContent = idx === 0 ? `H${step.house}` : `H${step.house}`;
 
       mini.appendChild(img);
       mini.appendChild(badge);
+
+      // 체인 미니 클릭 시도 카드 정보 열기
+      mini.addEventListener("click", ()=>{
+        openModal(step.card, `체인: H${step.house}`);
+      });
+
       chainRow.appendChild(mini);
     });
   }
 
   // =========================================
-  // 7) 뽑기
+  // 뽑기
   // =========================================
   function draw(){
     clearStageOnly();
 
     if(mode === "gt"){
       const cards = take(36);
-      gtLayout = buildGtPositions(cards);
-      renderGrandTableau(gtLayout);
+      gt = buildGrandTableau(cards);
+      renderGrandTableau(gt);
       return;
     }
 
     const n = Number(mode);
-    drawn = take(n);
-    renderBasic(drawn);
+    const cards = take(n);
+    renderBasic(cards);
   }
 
   // =========================================
-  // 8) 이벤트
+  // 이벤트
   // =========================================
   spreadButtons.addEventListener("click", (e)=>{
     const btn = e.target.closest("button");
@@ -624,38 +760,38 @@
   });
 
   btnDraw.addEventListener("click", draw);
-
-  btnShuffle.addEventListener("click", ()=>{
-    freshDeck();
-  });
-
-  btnClear.addEventListener("click", ()=>{
-    clearStageOnly();
-    chainRow.innerHTML = "";
-    chainBox.style.display = (mode==="gt") ? "block" : "none";
-  });
+  btnShuffle.addEventListener("click", ()=> freshDeck());
+  btnClear.addEventListener("click", ()=> clearStageOnly());
 
   btnRescan.addEventListener("click", async ()=>{
     await autoDetectBasePath();
-    // 이미 그려진 카드가 있다면 이미지 src 갱신
-    document.querySelectorAll(".card img, .mini img").forEach(img=>{
-      const parent = img.closest(".card, .mini");
-      if(!parent) return;
-      const cardEl = img.closest(".card");
-      if(cardEl){
-        const cardNo = Number(cardEl.dataset.card || "0");
-        if(cardNo) img.src = imgSrc(cardNo);
-      }else{
-        // mini는 alt에서 번호를 못 얻으니 그냥 전체 체인을 재생성하지 않고 둠
-        // (대신 바로 뽑기/클릭하면 새로 갱신됨)
-      }
+    // 화면에 떠있는 카드 이미지 갱신
+    document.querySelectorAll(".card").forEach(cardEl=>{
+      const cardNo = Number(cardEl.dataset.card || "0");
+      const img = cardEl.querySelector("img");
+      if(cardNo && img) img.src = imgSrc(cardNo);
+    });
+    document.querySelectorAll(".mini").forEach(mini=>{
+      const img = mini.querySelector("img");
+      const alt = img?.alt || "";
+      const m = alt.match(/Chain\s+(\d+)/);
+      if(m && img) img.src = imgSrc(Number(m[1]));
     });
   });
 
+  btnChainLen.addEventListener("click", ()=>{
+    // 6~12 사이로 순환
+    CHAIN_LEN = CHAIN_LEN >= 12 ? 6 : CHAIN_LEN + 1;
+    btnChainLen.textContent = `체인 길이: ${CHAIN_LEN}`;
+    // 현재 체인은 유지(원하면 클릭해서 새로 생성)
+    chainMeta.textContent = `체인 길이를 ${CHAIN_LEN}로 설정했어요. 그랑타블로에서 카드를 다시 클릭하면 새 길이로 체인이 생성됩니다.`;
+  });
+
   // =========================================
-  // 9) 초기화
+  // 초기화
   // =========================================
   (async function init(){
+    btnChainLen.textContent = `체인 길이: ${CHAIN_LEN}`;
     freshDeck();
     setMode("1");
     await autoDetectBasePath();
