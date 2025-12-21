@@ -144,47 +144,42 @@
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 0;
+      padding: 0;              /* ✅ 8px -> 0 */
       backdrop-filter: blur(10px);
       display:flex;
       flex-direction:column;
-      gap:0;
+      gap:0;                   /* ✅ 8px -> 0 */
       overflow:hidden;
     }
 
-    /* ✅ 그리드: gap 0 + 셀을 1fr로 꽉 채움 */
+    /* ✅ 그리드: gap 0 + “붙이기” 유지 + (중요) align-content는 건드리지 않음 */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
       width:100%;
       height:100%;
       display:grid;
-      gap: 0;
+      gap: 0;                  /* ✅ 카드 간격 0 */
       overflow:hidden;
-      justify-content:center; /* 기본은 가운데(가로) */
-    }
-
-    /* ✅ 결과 가운데 정렬(세로/가로) */
-    .grid.centered{
-      align-content:center;
-      justify-content:center;
-    }
-    /* ✅ GT에서 체인 뜰 땐 위로(세로) */
-    .grid.topped{
-      align-content:start;
-      justify-content:center;
+      align-content:start;     /* ✅ 유지: 빈 줄(여백) 방지 핵심 */
+      justify-content:start;   /* 기본은 start, 결과 뜰 때만 class로 중앙 */
     }
 
     .grid.mode-gt{
-      grid-template-columns: repeat(9, 1fr);
-      grid-template-rows: repeat(4, 1fr);
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+      grid-template-rows: repeat(4, minmax(0, 1fr)); /* ✅ 기존 유지(겹침 방지) */
     }
     .grid.mode-9{
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
     }
+    /* 1/2/3은 JS에서 grid-template-columns 설정 */
 
-    /* ✅ 카드 흰 박스 완전 제거 + 셀 100% 채우기 */
+    /* ✅ 가운데 정렬은 “가로만” (세로는 start 유지해서 빈 줄 방지) */
+    .grid.centered{ justify-content:center; }
+    .grid.topped{ justify-content:center; }
+
+    /* ✅ 카드 흰 박스 제거 + 이미지끼리 붙이기 */
     .card{
       position:relative;
       width: 100%;
@@ -198,15 +193,25 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      /* ✅ 셀 기준 비율 유지(잘림 최소화) */
+      aspect-ratio: 3 / 4.6;
+      animation: pop .18s ease-out;
     }
 
-    /* ✅ 기본: 카드가 안 잘리게(여백이 생길 수 있음) */
+    @keyframes pop{
+      from{ transform: scale(.985); opacity:.0; }
+      to{ transform: scale(1); opacity:1; }
+    }
+
+    /* ✅ “잘리지 않게” + “틈(1px) 최소화”: contain + 살짝 확대 */
     .card img{
       width:100%;
       height:100%;
-      object-fit: contain;
+      object-fit: contain;        /* ✅ 안 잘리게 */
       object-position:center;
       display:block;
+      transform: scale(1.01);     /* ✅ 미세 틈 방지 */
+      transform-origin:center;
     }
 
     .badge{
@@ -226,6 +231,7 @@
       outline: 3px solid rgba(45,212,191,.28);
     }
 
+    /* ✅ 체인은 GT 클릭 후에만 나타나게 */
     .chainBox{
       flex: 0 0 auto;
       display:none;
@@ -259,6 +265,7 @@
       height:100%;
       object-fit: contain;
       display:block;
+      transform: scale(1.01);
     }
     .mini .badge{ top:4px; left:4px; font-size: 9px; padding: 3px 5px; }
 
@@ -327,10 +334,10 @@
       background: rgba(255,255,255,.75);
     }
 
-    /* ✅ 모바일은 기존처럼 줄바꿈 */
+    /* ✅ 모바일은 줄바꿈(여백/간격 0 유지) */
     @media (max-width: 980px){
       .grid.mode-gt{
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         grid-template-rows: auto;
         grid-auto-rows: 1fr;
       }
@@ -338,7 +345,7 @@
     @media (max-width: 640px){
       header{ flex-direction:column; align-items:flex-start; }
       .grid.mode-gt{
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         grid-template-rows: auto;
         grid-auto-rows: 1fr;
       }
@@ -578,18 +585,6 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  function clearStageOnly(){
-    grid.innerHTML = "";
-    chainRow.innerHTML = "";
-    chainTitle.textContent = "체인";
-    chainMeta.textContent = "";
-    chainBox.style.display = "none";
-    gt = null;
-
-    // ✅ GT에서도 “뽑기 전”엔 가운데 정렬로
-    layoutGrid();
-  }
-
   function applyGridTemplate(){
     grid.className = "grid";
     grid.style.gridTemplateColumns = "";
@@ -603,28 +598,40 @@
       chainBox.style.display = "none";
     } else {
       const n = Number(mode);
-      grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
-      grid.style.gridTemplateRows = `repeat(1, 1fr)`;
+      grid.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+      grid.style.gridTemplateRows = `repeat(1, minmax(0, 1fr))`;
       chainBox.style.display = "none";
     }
   }
 
-  // ✅ 핵심: 뽑기 결과는 가운데 / GT에서 체인 뜨면 위로
+  // ✅ 핵심: “붙이기/간격 0” 유지 + 가운데는 가로만
+  // - 1/2/3/9: 카드가 있으면 centered(가로 가운데)
+  // - GT: 카드가 있고 체인이 보이면 topped(가로 가운데, 위 정렬 유지)
+  //       카드만 있으면 centered(가로 가운데)
   function layoutGrid(){
     grid.classList.remove("centered","topped");
 
     const hasCards = grid.children.length > 0;
     const chainVisible = (chainBox.style.display === "block");
 
+    if(!hasCards) return; // 뽑기 전엔 굳이 클래스 안 줘도 됨
+
     if(mode === "gt"){
-      // GT는: 뽑기 전(카드 없을 때)도 가운데,
-      // 뽑은 뒤 카드가 있고 체인이 뜨면 위로
-      if(hasCards && chainVisible) grid.classList.add("topped");
+      if(chainVisible) grid.classList.add("topped");
       else grid.classList.add("centered");
     } else {
-      // 1/2/3/9는 항상 가운데
       grid.classList.add("centered");
     }
+  }
+
+  function clearStageOnly(){
+    grid.innerHTML = "";
+    chainRow.innerHTML = "";
+    chainTitle.textContent = "체인";
+    chainMeta.textContent = "";
+    chainBox.style.display = "none";
+    gt = null;
+    layoutGrid();
   }
 
   function setMode(newMode){
@@ -635,7 +642,7 @@
     });
 
     applyGridTemplate();
-    clearStageOnly(); // 안에서 layoutGrid()까지 호출됨
+    clearStageOnly();
   }
 
   function createCardEl(cardNo, label, onClick){
@@ -662,7 +669,7 @@
     cards.forEach((no, idx)=>{
       grid.appendChild(createCardEl(no, `${idx+1}`, ()=> openModal(no)));
     });
-    layoutGrid(); // ✅ 가운데 정렬
+    layoutGrid();
   }
 
   function buildGrandTableau(cards36){
@@ -742,13 +749,13 @@
 
         openModal(cardNo, `하우스 H${house}`);
 
-        layoutGrid(); // ✅ 체인 뜨면 GT는 위로 정렬
+        layoutGrid(); // ✅ 체인 뜬 뒤 GT는 topped(가로 가운데, 위 정렬 유지)
       });
 
       grid.appendChild(el);
     }
 
-    layoutGrid(); // ✅ GT 뽑은 직후(체인 아직 없음)엔 가운데
+    layoutGrid(); // ✅ GT 뽑은 직후(체인 아직 없음) => centered(가로 가운데)
   }
 
   function draw(){
@@ -779,7 +786,7 @@
     loadQuestion();
     freshDeck();
     await autoDetectBasePath();
-    setMode("1"); // 뽑기 전엔 카드 없음 + 가운데 정렬
+    setMode("1"); // 뽑기 전엔 카드 없음
   })();
 </script>
 </body>
