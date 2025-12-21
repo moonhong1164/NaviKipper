@@ -6,19 +6,21 @@
   <title>KIPPER 카드 뽑기 | 제작 : 월홍🌙</title>
   <style>
     :root{
-      /* ===== Mint Theme ===== */
-      --bg:#06121a;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.10);
-      --text:#eafffb;
-      --muted: rgba(234,255,251,.72);
-      --line: rgba(255,255,255,.14);
+      /* ===== Light Mint on White ===== */
+      --bg:#f7fffd;                 /* 거의 흰 민트 */
+      --bg2:#ffffff;                /* 완전 흰 */
+      --panel:#ffffffcc;
+      --panel2:#ffffff;
+      --text:#0f172a;
+      --muted:#475569;
+      --line: rgba(15,23,42,.10);
 
-      --accent:#2dd4bf;     /* mint */
-      --accent2:#34d399;    /* mint-green */
+      --accent:#2dd4bf;            /* mint */
+      --accentDeep:#14b8a6;        /* 더 진한 민트 */
+      --accentSoft: rgba(45,212,191,.14);
       --danger:#fb7185;
 
-      --shadow: 0 14px 50px rgba(0,0,0,.48);
+      --shadow: 0 12px 40px rgba(15,23,42,.10);
       --radius2: 22px;
       --max: 1100px;
     }
@@ -28,9 +30,9 @@
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       background:
-        radial-gradient(1100px 520px at 25% 10%, rgba(45,212,191,.35), transparent 60%),
-        radial-gradient(900px 460px at 75% 0%, rgba(52,211,153,.22), transparent 60%),
-        radial-gradient(900px 520px at 70% 85%, rgba(45,212,191,.14), transparent 60%),
+        radial-gradient(1100px 520px at 22% 8%, rgba(45,212,191,.18), transparent 60%),
+        radial-gradient(900px 460px at 78% 0%, rgba(20,184,166,.10), transparent 60%),
+        radial-gradient(900px 520px at 70% 92%, rgba(45,212,191,.10), transparent 60%),
         var(--bg);
       color:var(--text);
     }
@@ -50,6 +52,7 @@
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
       padding: 14px;
+      backdrop-filter: blur(10px);
     }
     .controls{
       display:flex; flex-wrap:wrap; gap:10px;
@@ -58,32 +61,55 @@
     .seg{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
 
     button{
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(15,23,42,.12);
+      background: rgba(255,255,255,.92);
       color: var(--text);
       padding: 10px 12px;
       border-radius: 999px;
       cursor:pointer;
-      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
       font-weight: 750;
       font-size: 13px;
       letter-spacing: -.1px;
       user-select:none;
+      box-shadow: 0 6px 18px rgba(15,23,42,.06);
     }
-    button:hover{ background: rgba(255,255,255,.10); }
+    button:hover{
+      background: #ffffff;
+      border-color: rgba(20,184,166,.35);
+      box-shadow: 0 10px 24px rgba(15,23,42,.08);
+    }
     button:active{ transform: scale(.98); }
+
     button.primary{
-      background: linear-gradient(135deg, rgba(45,212,191,.92), rgba(45,212,191,.55));
-      border-color: rgba(45,212,191,.60);
+      background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(45,212,191,.70));
+      border-color: rgba(20,184,166,.45);
+      color: #05201c;
+      box-shadow: 0 12px 26px rgba(20,184,166,.18);
     }
-    button.ghost{ background: rgba(255,255,255,.04); }
+    button.primary:hover{
+      border-color: rgba(20,184,166,.60);
+      box-shadow: 0 16px 34px rgba(20,184,166,.22);
+    }
+
+    button.ghost{
+      background: rgba(255,255,255,.80);
+    }
+
     button.danger{
-      background: rgba(251,113,133,.18);
+      background: rgba(251,113,133,.12);
+      border-color: rgba(251,113,133,.35);
+      color:#9f1239;
+      box-shadow: 0 10px 26px rgba(251,113,133,.10);
+    }
+    button.danger:hover{
+      background: rgba(251,113,133,.16);
       border-color: rgba(251,113,133,.45);
     }
+
     button.active{
-      outline: 2px solid rgba(45,212,191,.65);
-      border-color: rgba(45,212,191,.65);
+      outline: 2px solid rgba(20,184,166,.35);
+      border-color: rgba(20,184,166,.55);
       background: rgba(45,212,191,.18);
     }
 
@@ -97,6 +123,7 @@
       box-shadow: var(--shadow);
       padding: 16px;
       overflow:hidden;
+      backdrop-filter: blur(10px);
     }
 
     /* ====== Grid ====== */
@@ -105,13 +132,8 @@
       justify-content:center;
       align-items:start;
       gap: 10px;
+      --cardW: 120px;
     }
-
-    /* 카드 폭을 CSS 변수로 관리(모드별로 JS에서 바꿔줌) */
-    .grid{
-      --cardW: 120px; /* 기본값 */
-    }
-
     .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(var(--cardW), var(--cardW))); }
     .grid.nine{  grid-template-columns: repeat(3, minmax(var(--cardW), var(--cardW))); }
     .grid.gt{    grid-template-columns: repeat(9, minmax(var(--cardW), 1fr)); gap: 8px; }
@@ -119,37 +141,36 @@
     /* ====== Card ====== */
     .card{
       position:relative;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow:hidden;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.05);
-      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 12px 30px rgba(15,23,42,.10);
       cursor:pointer;
-      transition: transform .12s ease, border-color .15s ease, background .15s ease;
+      transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
       width: var(--cardW);
       max-width: 100%;
       justify-self:center;
-
-      /* 세로로 길어 보이는 느낌 완화: 살짝 덜 길게 */
-      aspect-ratio: 3 / 4.6;
+      aspect-ratio: 3 / 4.6; /* 덜 길어 보이게 */
       display:flex;
       align-items:center;
       justify-content:center;
     }
-
-    .card:hover{ transform: translateY(-2px); border-color: rgba(45,212,191,.70); }
-    .card.selected{
-      outline: 3px solid rgba(52,211,153,.78);
-      border-color: rgba(52,211,153,.78);
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(20,184,166,.45);
+      box-shadow: 0 16px 40px rgba(15,23,42,.12);
     }
-
-    /* 이미지 "잘림 없이" 그대로: contain */
+    .card.selected{
+      outline: 3px solid rgba(45,212,191,.35);
+      border-color: rgba(20,184,166,.55);
+    }
     .card img{
       width:100%;
       height:100%;
       object-fit: contain;
       display:block;
-      background: rgba(0,0,0,.18); /* 여백 생길 때 깔리는 패널 */
+      background: linear-gradient(180deg, rgba(45,212,191,.08), rgba(255,255,255,0));
     }
 
     .badge{
@@ -159,10 +180,10 @@
       font-weight: 900;
       padding: 6px 8px;
       border-radius: 999px;
-      background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.20);
-      color: rgba(255,255,255,.92);
-      backdrop-filter: blur(6px);
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15,23,42,.12);
+      color: rgba(15,23,42,.86);
+      backdrop-filter: blur(8px);
     }
 
     /* ===== Chain ===== */
@@ -170,27 +191,27 @@
       margin-top: 14px;
       padding: 14px;
       border-radius: var(--radius2);
-      background: rgba(255,255,255,.05);
-      border: 1px solid var(--line);
+      background: rgba(45,212,191,.10);
+      border: 1px solid rgba(20,184,166,.18);
     }
     .chainTop{
       display:flex; justify-content:space-between; align-items:flex-start;
       gap:10px; flex-wrap:wrap; margin-bottom: 10px;
     }
-    .chainTitle{margin:0; font-size: 14px; font-weight: 900; letter-spacing: -.1px;}
+    .chainTitle{margin:0; font-size: 14px; font-weight: 950; letter-spacing: -.1px;}
     .chainMeta{color: var(--muted); font-size: 12px; line-height:1.35;}
     .chainRow{display:flex; gap:10px; overflow:auto; padding-bottom: 6px;}
     .chainRow::-webkit-scrollbar{ height:8px; }
-    .chainRow::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.14); border-radius: 999px; }
+    .chainRow::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.12); border-radius: 999px; }
 
     .mini{
       width: 92px; min-width: 92px;
       aspect-ratio: 3/4.6;
       border-radius: 14px;
       overflow:hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 10px 24px rgba(15,23,42,.10);
       position:relative;
       display:flex;
       align-items:center;
@@ -201,14 +222,20 @@
       height:100%;
       object-fit: contain;
       display:block;
-      background: rgba(0,0,0,.18);
+      background: linear-gradient(180deg, rgba(45,212,191,.08), rgba(255,255,255,0));
     }
-    .mini .badge{ top:6px; left:6px; font-size: 10px; padding: 5px 7px; }
+    .mini .badge{
+      top:6px; left:6px;
+      font-size: 10px; padding: 5px 7px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15,23,42,.12);
+      color: rgba(15,23,42,.86);
+    }
 
     /* ===== Modal ===== */
     .modalBackdrop{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
+      background: rgba(15,23,42,.45);
       display:none;
       align-items:center;
       justify-content:center;
@@ -218,9 +245,9 @@
     .modal{
       width:min(920px, 100%);
       border-radius: 22px;
-      background: rgba(9, 24, 33, .92);
-      border: 1px solid rgba(255,255,255,.14);
-      box-shadow: 0 20px 70px rgba(0,0,0,.55);
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(15,23,42,.12);
+      box-shadow: 0 24px 80px rgba(15,23,42,.18);
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
@@ -234,17 +261,17 @@
     .modalPreview{
       border-radius: 18px;
       overflow:hidden;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.90);
       aspect-ratio: 3/4.6;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      box-shadow: 0 10px 26px rgba(15,23,42,.12);
     }
     .modalPreview img{
       width:100%;
       height:100%;
       object-fit: contain;
       display:block;
-      background: rgba(0,0,0,.18);
+      background: linear-gradient(180deg, rgba(45,212,191,.08), rgba(255,255,255,0));
     }
     .modalHeader{
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
@@ -256,6 +283,7 @@
       font-weight: 950;
       letter-spacing: -.2px;
       line-height: 1.25;
+      color: #0f172a;
     }
     .modalSub{
       margin:6px 0 0;
@@ -268,24 +296,24 @@
       font-size: 12px;
       padding: 7px 10px;
       border-radius: 999px;
-      border: 1px solid rgba(45,212,191,.45);
-      background: rgba(45,212,191,.10);
-      color: rgba(234,255,251,.92);
-      font-weight: 750;
+      border: 1px solid rgba(20,184,166,.30);
+      background: rgba(45,212,191,.14);
+      color: #0f172a;
+      font-weight: 800;
     }
     .modalFooter{
       padding: 10px 14px 14px;
       display:flex;
       justify-content:flex-end;
       gap:8px;
-      border-top: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
+      border-top: 1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.75);
     }
 
     footer{
       margin-top: 18px;
       text-align:center;
-      color: rgba(234,255,251,.62);
+      color: rgba(71,85,105,.9);
       font-size: 12px;
       padding: 10px 0 0;
     }
@@ -510,31 +538,25 @@
   }
 
   // =========================================
-  // 카드 크기 자동 조절(세로 길어 보임 완화 + 화면 꽉 차게)
+  // 카드 크기 자동 조절
   // =========================================
   function setCardWidth(px){
     grid.style.setProperty("--cardW", `${px}px`);
   }
-
   function applyResponsiveCardSize(){
     const w = Math.min(window.innerWidth, 1100);
-
     if(mode === "gt"){
-      // 9열이기 때문에 기본을 작게, 화면이 좁으면 더 작게
       if(w >= 980) setCardWidth(100);
       else if(w >= 720) setCardWidth(92);
       else setCardWidth(86);
       return;
     }
-
     if(mode === "9"){
       if(w >= 980) setCardWidth(120);
       else if(w >= 720) setCardWidth(112);
       else setCardWidth(98);
       return;
     }
-
-    // 1~3,2카드
     if(w >= 980) setCardWidth(140);
     else if(w >= 720) setCardWidth(128);
     else setCardWidth(110);
@@ -588,7 +610,6 @@
     el.appendChild(img);
     el.appendChild(badge);
 
-    // GT는 별도 핸들러에서 처리(체인+모달)
     el.addEventListener("click", ()=>{
       if(mode !== "gt") openModal(cardNo);
     });
@@ -622,8 +643,7 @@
   function renderBasic(cards){
     grid.innerHTML = "";
     cards.forEach((no, idx)=>{
-      const el = createCardEl(no, `${idx+1}`);
-      grid.appendChild(el);
+      grid.appendChild(createCardEl(no, `${idx+1}`));
     });
   }
 
@@ -639,10 +659,6 @@
   }
 
   function buildHouseChain(gtState, startHouse, len){
-    // 하우스 기반 체인:
-    // 현재 하우스(H)에 있는 카드 = C
-    // 다음 하우스 = C(카드 번호)
-    // 반복 (루프면 중단)
     const chain = [];
     const seenHouses = new Set();
     let currentHouse = startHouse;
@@ -667,7 +683,6 @@
       chainMeta.textContent = "";
       return;
     }
-
     const start = chain[0];
     chainTitle.textContent = `체인 (시작: H${start.house})`;
     chainMeta.textContent = `H${start.house} → H${start.card} → … (길이 ${chain.length}, 설정 ${CHAIN_LEN})`;
@@ -736,8 +751,7 @@
     }
 
     const n = Number(mode);
-    const cards = take(n);
-    renderBasic(cards);
+    renderBasic(take(n));
   }
 
   // =========================================
@@ -756,7 +770,6 @@
   btnChainLen.addEventListener("click", ()=>{
     CHAIN_LEN = CHAIN_LEN >= 12 ? 6 : CHAIN_LEN + 1;
     btnChainLen.textContent = `체인 길이: ${CHAIN_LEN}`;
-    // 다음 클릭부터 적용
   });
 
   window.addEventListener("resize", applyResponsiveCardSize);
@@ -768,7 +781,7 @@
     btnChainLen.textContent = `체인 길이: ${CHAIN_LEN}`;
     freshDeck();
     setMode("1");
-    await autoDetectBasePath(); // 내부 탐색만, 화면 표시 없음
+    await autoDetectBasePath(); // 내부 탐색만
   })();
 </script>
 </body>
