@@ -150,15 +150,15 @@
       display:flex;
       flex-direction:column;
       gap:8px;
-      overflow:hidden; /* ✅ 화면 밖으로 나가면 안 되니 stage 내부는 숨김 (대신 JS가 크기 맞춤) */
+      overflow:hidden;
     }
 
-    /* ✅ 그리드가 stage 안에서 늘어나면서 높이/너비를 확보 */
+    /* ✅ 그리드: 카드끼리 붙이기(간격 0) */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
       display:grid;
-      gap: 6px;
+      gap: 0;                 /* ✅ 변경: 6px → 0 */
       --cardW: 60px;
       align-content: start;
       overflow:hidden;
@@ -167,25 +167,25 @@
     /* 모드별 템플릿 */
     .grid.mode-gt{
       grid-template-columns: repeat(9, minmax(0, 1fr));
-      grid-template-rows: repeat(4, minmax(0, 1fr)); /* ✅ 9x4 “행”을 고정 => 겹침 방지 */
-      gap: 5px;
+      grid-template-rows: repeat(4, minmax(0, 1fr));
+      gap: 0;                 /* ✅ 변경: 5px → 0 */
     }
     .grid.mode-9{
       grid-template-columns: repeat(3, minmax(0, 1fr));
       grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 0;                 /* ✅ 추가: 0 */
     }
-    /* 1/2/3은 JS에서 grid-template-columns 설정 */
 
-    /* 카드(겹침 금지: width 100%, height는 aspect-ratio로) */
+    /* ✅ 카드 흰 박스 제거 + 이미지끼리 붙이기 위해 radius 제거 */
     .card{
       position:relative;
       width: 100%;
       height: 100%;
-      border-radius: 12px;
+      border-radius: 0;       /* ✅ 변경: 12px → 0 */
       overflow:hidden;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.90);
-      box-shadow: 0 10px 22px rgba(15,23,42,.09);
+      border: none;           /* ✅ 변경: 테두리 제거 */
+      background: transparent;/* ✅ 변경: 흰 배경 제거 */
+      box-shadow: none;       /* ✅ 변경: 그림자 제거 */
       cursor:pointer;
       display:flex;
       align-items:center;
@@ -193,6 +193,7 @@
       aspect-ratio: 3 / 4.6;
     }
     .card img{ width:100%; height:100%; object-fit:contain; display:block; }
+
     .badge{
       position:absolute;
       top:5px; left:5px;
@@ -211,7 +212,6 @@
       border-color: rgba(20,184,166,.55);
     }
 
-    /* ✅ 체인은 "GT 클릭 후"에만 나타나게 해서 높이 갑자기 먹는 문제 방지 */
     .chainBox{
       flex: 0 0 auto;
       display:none;
@@ -227,14 +227,15 @@
     .chainMeta{color: var(--muted); font-size: 11px; line-height:1.35;}
     .chainRow{display:flex; gap:8px; overflow-x:auto; overflow-y:hidden; padding-bottom: 4px;}
 
+    /* ✅ 체인 미니도 흰 박스 제거 */
     .mini{
       width: 58px; min-width: 58px;
       aspect-ratio: 3/4.6;
-      border-radius: 10px;
+      border-radius: 0;       /* ✅ 변경: 10px → 0 */
       overflow:hidden;
-      border: 1px solid rgba(15,23,42,.10);
-      background: rgba(255,255,255,.90);
-      box-shadow: 0 10px 20px rgba(15,23,42,.08);
+      border: none;           /* ✅ 변경 */
+      background: transparent;/* ✅ 변경 */
+      box-shadow: none;       /* ✅ 변경 */
       position:relative;
       display:flex;
       align-items:center;
@@ -311,7 +312,7 @@
     @media (max-width: 980px){
       .grid.mode-gt{
         grid-template-columns: repeat(6, minmax(0, 1fr));
-        grid-template-rows: auto; /* 모바일은 줄바꿈 */
+        grid-template-rows: auto;
       }
     }
     @media (max-width: 640px){
@@ -573,12 +574,6 @@
     return Math.max(0, parseFloat(g) || 0);
   }
 
-  /**
-   * ✅ “겹침/잘림”을 완전히 막는 핵심:
-   *  - grid가 차지하는 실제 너비/높이 기준으로
-   *  - cols/rows에 맞는 카드 폭을 계산
-   *  - 안전 마진(SAFE + EXTRA) 적용해서 항상 조금 더 작게
-   */
   function fitCards(){
     const doFit = () => {
       const gridW = grid.clientWidth;
@@ -595,19 +590,14 @@
         cols = Number(mode); rows = 1;
       }
 
-      // 안전 마진 (브라우저 반올림/테두리/배지/폰트 오차 흡수)
       const SAFE = 0.92;
       const EXTRA = 10;
 
-      // 가로 기준 가능한 폭
       const wByWidth = (gridW - gap*(cols-1)) / cols;
-
-      // 세로 기준 가능한 폭 (height = width*CARD_AR)
       const wByHeight = ((gridH - gap*(rows-1)) / rows) / CARD_AR;
 
       let w = Math.floor(Math.min(wByWidth, wByHeight) * SAFE) - EXTRA;
 
-      // 너무 작아지면 클릭이 불편하니 최소값만 보장
       const minW = (mode === "gt") ? 34 : 46;
       const maxW = (mode === "gt") ? 90 : 130;
       w = Math.max(minW, Math.min(maxW, w));
@@ -615,7 +605,6 @@
       setCardWidth(w);
     };
 
-    // 레이아웃 확정 후 2프레임 계산(PC에서 특히 안정)
     requestAnimationFrame(() => {
       doFit();
       requestAnimationFrame(doFit);
@@ -638,7 +627,6 @@
 
     if(mode === "gt"){
       grid.classList.add("mode-gt");
-      // 체인은 GT 뽑고 카드 클릭했을 때만 보여줌(높이 먹는 거 방지)
       chainBox.style.display = "none";
     } else if(mode === "9"){
       grid.classList.add("mode-9");
@@ -659,8 +647,8 @@
     });
 
     applyGridTemplate();
-    clearStageOnly();   // ✅ 모드 바꾸면 항상 비움(첫 화면/전환 시 카드 노출 X)
-    fitCards();         // ✅ 그리드 크기 계산 준비
+    clearStageOnly();
+    fitCards();
   }
 
   function createCardEl(cardNo, label, onClick){
@@ -758,7 +746,6 @@
         document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
         el.classList.add("selected");
 
-        // ✅ 클릭 후에만 체인 박스 표시
         if(chainBox.style.display !== "block"){
           chainBox.style.display = "block";
         }
@@ -768,7 +755,6 @@
 
         openModal(cardNo, `하우스 H${house}`);
 
-        // ✅ 체인 박스가 생기면 그리드 높이가 줄어드니 다시 맞춤
         fitCards();
       });
 
@@ -779,7 +765,6 @@
   }
 
   function draw(){
-    // 뽑기 눌러야만 카드가 뜸(첫 화면 유지)
     clearStageOnly();
 
     if(mode === "gt"){
@@ -793,7 +778,6 @@
     renderBasic(take(n));
   }
 
-  // 이벤트
   spreadButtons.addEventListener("click", (e)=>{
     const btn = e.target.closest("button");
     if(!btn) return;
@@ -806,12 +790,11 @@
 
   window.addEventListener("resize", ()=> fitCards());
 
-  // 초기화
   (async function init(){
     loadQuestion();
     freshDeck();
     await autoDetectBasePath();
-    setMode("1"); // ✅ 첫 화면 카드 안 보이게(여기서 draw() 호출 안 함)
+    setMode("1");
   })();
 </script>
 </body>
