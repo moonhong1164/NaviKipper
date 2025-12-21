@@ -144,23 +144,25 @@
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 0;              /* ✅ 8px -> 0 */
+      padding: 0;
       backdrop-filter: blur(10px);
       display:flex;
       flex-direction:column;
-      gap:0;                   /* ✅ 8px -> 0 */
+      gap:0;
       overflow:hidden;
     }
 
-    /* ✅ 그리드: gap 0 + 셀을 1fr로 꽉 채움(칸 남는 여백 제거) */
+    /* ✅ 그리드: gap 0 + 셀을 카드비율로 고정해서 “빈칸/여백” 방지 */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
       width:100%;
       height:100%;
       display:grid;
-      gap: 0;                  /* ✅ 카드 간격 0 */
+      gap: 0;
       overflow:hidden;
+      justify-content: stretch;
+      align-content: stretch;
     }
 
     .grid.mode-gt{
@@ -172,7 +174,7 @@
       grid-template-rows: repeat(3, 1fr);
     }
 
-    /* ✅ 카드 흰 박스 완전 제거 + 셀 100% 채우기 */
+    /* ✅ 핵심: 셀 자체를 카드 비율로 고정 → 카드가 안 잘리고, 칸도 꽉 찬 느낌 */
     .card{
       position:relative;
       width: 100%;
@@ -186,17 +188,18 @@
       display:flex;
       align-items:center;
       justify-content:center;
+
+      aspect-ratio: 3 / 4.6;      /* ✅ 추가 */
     }
 
-    /* ✅ 셀을 “무조건” 꽉 채우기 + 1px 실금(서브픽셀) 방지용 살짝 확대 */
+    /* ✅ 안 잘리게 + 틈 방지용 확대 제거 */
     .card img{
       width:100%;
       height:100%;
-      object-fit: cover;        /* ✅ contain -> cover */
+      object-fit: contain;         /* ✅ cover -> contain */
       object-position:center;
       display:block;
-      transform: scale(1.01);   /* ✅ 1px 틈 방지 */
-      transform-origin:center;
+      transform: none;             /* ✅ scale 제거 */
     }
 
     .badge{
@@ -247,7 +250,7 @@
     .mini img{
       width:100%;
       height:100%;
-      object-fit: cover;
+      object-fit: contain;  /* ✅ cover -> contain */
       display:block;
     }
     .mini .badge{ top:4px; left:4px; font-size: 9px; padding: 3px 5px; }
