@@ -137,7 +137,6 @@
       box-shadow: 0 10px 24px rgba(20,184,166,.14);
     }
 
-    /* ✅ 남은 높이를 stage가 전부 차지 */
     .stage{
       flex: 1 1 auto;
       min-height: 0;
@@ -153,22 +152,16 @@
       overflow:hidden;
     }
 
-    /* ✅ 그리드: 카드끼리 붙이기(간격 0) + 칸을 꽉 채우기 */
+    /* ✅ 그리드: 카드끼리 붙이기(간격 0) */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
       display:grid;
       gap: 0;
-      --cardW: 60px;
+      align-content: start;
       overflow:hidden;
-
-      align-content: stretch;
-      justify-content: stretch;
-      align-items: stretch;
-      justify-items: stretch;
     }
 
-    /* 모드별 템플릿 */
     .grid.mode-gt{
       grid-template-columns: repeat(9, minmax(0, 1fr));
       grid-template-rows: repeat(4, minmax(0, 1fr));
@@ -180,7 +173,7 @@
       gap: 0;
     }
 
-    /* ✅ 카드: 흰 박스 제거 + 칸 100% 채움 + cover로 꽉 채우기 */
+    /* ✅ 카드: 흰 박스 제거 + (중요) 비율 고정 */
     .card{
       position:relative;
       width: 100%;
@@ -191,13 +184,17 @@
       background: transparent;
       box-shadow: none;
       cursor:pointer;
-      display:block;
-      aspect-ratio: auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      aspect-ratio: 3 / 4.6;   /* ✅ 다시 고정 (겹쳐보이는/이상 확대 방지) */
     }
+
+    /* ✅ PNG 여백이 없다면 contain이 “정상 크기”로 꽉 차게 보임 */
     .card img{
       width:100%;
       height:100%;
-      object-fit: cover;      /* ✅ 여백 잘라내고 꽉 채움 */
+      object-fit: contain;     /* ✅ cover 제거 → 과확대/잘림 방지 */
       object-position: center;
       display:block;
     }
@@ -235,7 +232,6 @@
     .chainMeta{color: var(--muted); font-size: 11px; line-height:1.35;}
     .chainRow{display:flex; gap:8px; overflow-x:auto; overflow-y:hidden; padding-bottom: 4px;}
 
-    /* ✅ 체인 미니도 cover로 꽉 채우기 */
     .mini{
       width: 58px; min-width: 58px;
       aspect-ratio: 3/4.6;
@@ -252,7 +248,7 @@
     .mini img{
       width:100%;
       height:100%;
-      object-fit: cover;      /* ✅ 여백 잘라내고 꽉 채움 */
+      object-fit: contain;     /* ✅ cover 제거 */
       object-position: center;
       display:block;
     }
@@ -303,7 +299,7 @@
     .modalPreview img{
       width:100%;
       height:100%;
-      object-fit: cover;      /* ✅ 여백 잘라내고 꽉 채움 */
+      object-fit: contain;   /* ✅ cover 제거 */
       object-position: center;
       display:block;
     }
@@ -381,7 +377,6 @@
     </section>
 
     <section class="stage" id="stage">
-      <!-- ✅ 첫 화면: 비어있게(카드 안 보임) -->
       <div class="grid" id="grid"></div>
 
       <div class="chainBox" id="chainBox">
@@ -398,7 +393,6 @@
     <footer>제작 : 월홍🌙</footer>
   </div>
 
-  <!-- Modal -->
   <div class="modalBackdrop" id="modalBackdrop" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modalInner">
@@ -481,11 +475,9 @@
   let gt = null;
 
   const CHAIN_LEN = 8;
-  const CARD_AR = 4.6 / 3; // height = width * CARD_AR
+  const CARD_AR = 4.6 / 3;
 
   const grid = document.getElementById("grid");
-  const stage = document.getElementById("stage");
-
   const spreadButtons = document.getElementById("spreadButtons");
   const btnDraw = document.getElementById("btnDraw");
   const btnShuffle = document.getElementById("btnShuffle");
@@ -549,7 +541,6 @@
     return false;
   }
 
-  // 질문 저장
   const Q_KEY = "navikipper_question_final";
   function loadQuestion(){ qInput.value = localStorage.getItem(Q_KEY) || ""; }
   function saveQuestion(){ localStorage.setItem(Q_KEY, qInput.value.trim()); }
@@ -558,7 +549,6 @@
   btnClearQuestion.addEventListener("click", clearQuestion);
   qInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter"){ e.preventDefault(); saveQuestion(); } });
 
-  // Modal
   function openModal(cardNo, extraLine=""){
     const info = CARD_INFO[cardNo] || { ko:"(정보 없음)", en:"", kw:[] };
     modalImg.src = imgSrc(cardNo);
@@ -585,9 +575,6 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  function setCardWidth(px){
-    grid.style.setProperty("--cardW", `${px}px`);
-  }
   function getGapPx(el){
     const cs = getComputedStyle(el);
     const g = cs.gap || cs.columnGap || "0px";
@@ -622,7 +609,7 @@
       const maxW = (mode === "gt") ? 90 : 130;
       w = Math.max(minW, Math.min(maxW, w));
 
-      setCardWidth(w);
+      grid.style.setProperty("--cardW", `${w}px`);
     };
 
     requestAnimationFrame(() => {
