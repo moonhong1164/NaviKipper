@@ -173,8 +173,7 @@
       align-items:start;
       gap: 10px;
 
-      /* ✅ 가운데 몰지 않기: justify-content 제거 */
-      /* 카드 폭은 변수로 관리 */
+      /* ✅ 가운데 몰지 않기 */
       --cardW: 120px;
     }
     .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(var(--cardW), 1fr)); }
@@ -247,7 +246,7 @@
     .chainRow::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.12); border-radius: 999px; }
 
     .mini{
-      width: 92px; min-width: 92px;
+      width: 84px; min-width: 84px; /* ✅ 체인 미니도 살짝 줄임 */
       aspect-ratio: 3/4.6;
       border-radius: 14px;
       overflow:hidden;
@@ -480,7 +479,7 @@
     10:{ en:"Journey", ko:"여행/이동", kw:["출장/이사","거리","방향 전환"] },
     11:{ en:"Win lots of money", ko:"큰 돈/수익", kw:["당첨/보너스","수입 증가","재정 호재"] },
     12:{ en:"Rich girl", ko:"부유한 여성/혜택", kw:["특권","지원","풍요"] },
-    13: { en:"Young good lord", ko:"젊은 남성/유능한 사람", kw:["능력","기회","핵심 인물"] },
+    13:{ en:"Young good lord", ko:"젊은 남성/유능한 사람", kw:["능력","기회","핵심 인물"] },
     14:{ en:"Sad news", ko:"나쁜 소식", kw:["실망","불리한 통보","경고"] },
     15:{ en:"Good outcome in love", ko:"사랑의 좋은 결과", kw:["호감","관계 진전","성공"] },
     16:{ en:"His thoughts", ko:"생각/속마음", kw:["계획","관심","고민"] },
@@ -592,7 +591,7 @@
   }
 
   // =========================================
-  // 카드 크기 자동 조절(폭 꽉 쓰기)
+  // 카드 크기 자동 조절(✅ 더 작게)
   // =========================================
   function setCardWidth(px){
     grid.style.setProperty("--cardW", `${px}px`);
@@ -600,31 +599,30 @@
   function applyResponsiveCardSize(){
     const w = window.innerWidth;
 
+    // ✅ 전반적으로 기존보다 더 작게(한 단계 다운)
     if(mode === "gt"){
-      // 화면이 넓을수록 9열에 맞게 조금 크게
-      if(w >= 1400) setCardWidth(120);
-      else if(w >= 1100) setCardWidth(110);
-      else if(w >= 980) setCardWidth(100);
-      else if(w >= 720) setCardWidth(92);
-      else setCardWidth(86);
+      if(w >= 1400) setCardWidth(108);
+      else if(w >= 1100) setCardWidth(98);
+      else if(w >= 980) setCardWidth(90);
+      else if(w >= 720) setCardWidth(84);
+      else setCardWidth(78);
       return;
     }
 
     if(mode === "9"){
-      if(w >= 1400) setCardWidth(150);
-      else if(w >= 1100) setCardWidth(135);
-      else if(w >= 980) setCardWidth(120);
-      else if(w >= 720) setCardWidth(112);
-      else setCardWidth(98);
+      if(w >= 1400) setCardWidth(132);
+      else if(w >= 1100) setCardWidth(120);
+      else if(w >= 980) setCardWidth(108);
+      else if(w >= 720) setCardWidth(100);
+      else setCardWidth(90);
       return;
     }
 
-    // 1~3,2카드: 화면 넓으면 크게 써도 됨
-    if(w >= 1400) setCardWidth(200);
-    else if(w >= 1100) setCardWidth(170);
-    else if(w >= 980) setCardWidth(150);
-    else if(w >= 720) setCardWidth(132);
-    else setCardWidth(112);
+    if(w >= 1400) setCardWidth(170);
+    else if(w >= 1100) setCardWidth(150);
+    else if(w >= 980) setCardWidth(132);
+    else if(w >= 720) setCardWidth(118);
+    else setCardWidth(102);
   }
 
   // =========================================
