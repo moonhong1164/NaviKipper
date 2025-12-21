@@ -17,6 +17,10 @@
       --danger:#fb7185;
       --shadow: 0 12px 40px rgba(15,23,42,.10);
       --radius2: 18px;
+
+      /* ✅ 카드 비율 (height = width * 1.533333...) */
+      --ar: 1.533333;
+      --cardW: 60px; /* JS가 자동으로 바꿔줌 */
     }
 
     *{box-sizing:border-box}
@@ -24,7 +28,7 @@
 
     body{
       margin:0;
-      overflow:hidden; /* ✅ 스크롤 없음 */
+      overflow:hidden;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       background:
         radial-gradient(1200px 520px at 18% 8%, rgba(45,212,191,.18), transparent 60%),
@@ -34,7 +38,6 @@
       color:var(--text);
     }
 
-    /* ✅ 화면(100vh) 안에서만 배치 */
     .wrap{
       height: 100vh;
       width: 100%;
@@ -152,32 +155,32 @@
       overflow:hidden;
     }
 
-    /* ✅ 그리드: 카드끼리 붙이기(간격 0) */
+    /* ✅ 핵심: 그리드 셀 자체를 카드 비율로 고정 → 여백/늘어짐/겹침 방지 */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
       display:grid;
-      gap: 0;
+      gap: 0;                 /* ✅ 카드 간격 0 */
       align-content: start;
+      justify-content: start;
       overflow:hidden;
+      grid-auto-rows: calc(var(--cardW) * var(--ar)); /* ✅ 셀 높이 = 카드 비율 */
     }
 
     .grid.mode-gt{
-      grid-template-columns: repeat(9, minmax(0, 1fr));
-      grid-template-rows: repeat(4, minmax(0, 1fr));
-      gap: 0;
+      grid-template-columns: repeat(9, var(--cardW));
+      grid-template-rows: repeat(4, calc(var(--cardW) * var(--ar)));
     }
     .grid.mode-9{
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-template-rows: repeat(3, minmax(0, 1fr));
-      gap: 0;
+      grid-template-columns: repeat(3, var(--cardW));
+      grid-template-rows: repeat(3, calc(var(--cardW) * var(--ar)));
     }
 
-    /* ✅ 카드: 흰 박스 제거 + (중요) 비율 고정 */
+    /* ✅ 카드 박스 제거, 셀에 딱 맞게 */
     .card{
       position:relative;
-      width: 100%;
-      height: 100%;
+      width: var(--cardW);
+      height: calc(var(--cardW) * var(--ar));
       border-radius: 0;
       overflow:hidden;
       border: none;
@@ -187,14 +190,14 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      aspect-ratio: 3 / 4.6;   /* ✅ 다시 고정 (겹쳐보이는/이상 확대 방지) */
     }
 
-    /* ✅ PNG 여백이 없다면 contain이 “정상 크기”로 꽉 차게 보임 */
+    /* ✅ 여백 “절대” 안 생기게: cover로 칸을 꽉 채움
+       (셀 비율을 카드랑 맞춰놔서, 사실상 잘림도 거의 없음) */
     .card img{
       width:100%;
       height:100%;
-      object-fit: contain;     /* ✅ cover 제거 → 과확대/잘림 방지 */
+      object-fit: cover;
       object-position: center;
       display:block;
     }
@@ -234,7 +237,7 @@
 
     .mini{
       width: 58px; min-width: 58px;
-      aspect-ratio: 3/4.6;
+      height: calc(58px * var(--ar));
       border-radius: 0;
       overflow:hidden;
       border: none;
@@ -248,7 +251,7 @@
     .mini img{
       width:100%;
       height:100%;
-      object-fit: contain;     /* ✅ cover 제거 */
+      object-fit: cover;
       object-position: center;
       display:block;
     }
@@ -299,8 +302,7 @@
     .modalPreview img{
       width:100%;
       height:100%;
-      object-fit: contain;   /* ✅ cover 제거 */
-      object-position: center;
+      object-fit: contain;
       display:block;
     }
     .modalHeader{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom: 8px; }
@@ -325,17 +327,18 @@
       background: rgba(255,255,255,.75);
     }
 
+    /* ✅ 모바일은 9x4 그대로 유지하면 너무 작아서 cols만 줄이고 “붙이는 성질”은 유지 */
     @media (max-width: 980px){
       .grid.mode-gt{
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-        grid-template-rows: auto;
+        grid-template-columns: repeat(6, var(--cardW));
+        grid-template-rows: none;
+        grid-auto-rows: calc(var(--cardW) * var(--ar));
       }
     }
     @media (max-width: 640px){
       header{ flex-direction:column; align-items:flex-start; }
       .grid.mode-gt{
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        grid-template-rows: auto;
+        grid-template-columns: repeat(4, var(--cardW));
       }
       .modalInner{ grid-template-columns: 1fr; }
       .modalPreview{ width: 170px; }
@@ -575,41 +578,29 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  function getGapPx(el){
-    const cs = getComputedStyle(el);
-    const g = cs.gap || cs.columnGap || "0px";
-    return Math.max(0, parseFloat(g) || 0);
-  }
-
   function fitCards(){
     const doFit = () => {
       const gridW = grid.clientWidth;
       const gridH = grid.clientHeight;
-      const gap = getGapPx(grid);
 
       let cols = 1, rows = 1;
+      if(mode === "gt"){ cols = 9; rows = 4; }
+      else if(mode === "9"){ cols = 3; rows = 3; }
+      else { cols = Number(mode); rows = 1; }
 
-      if(mode === "gt"){
-        cols = 9; rows = 4;
-      } else if(mode === "9"){
-        cols = 3; rows = 3;
-      } else {
-        cols = Number(mode); rows = 1;
-      }
+      const SAFE = 0.98;  // ✅ 간격 0이니까 더 꽉 써도 됨
+      const EXTRA = 0;
 
-      const SAFE = 0.92;
-      const EXTRA = 10;
-
-      const wByWidth = (gridW - gap*(cols-1)) / cols;
-      const wByHeight = ((gridH - gap*(rows-1)) / rows) / CARD_AR;
+      const wByWidth  = (gridW) / cols;
+      const wByHeight = (gridH) / rows / CARD_AR;
 
       let w = Math.floor(Math.min(wByWidth, wByHeight) * SAFE) - EXTRA;
 
-      const minW = (mode === "gt") ? 34 : 46;
-      const maxW = (mode === "gt") ? 90 : 130;
+      const minW = (mode === "gt") ? 30 : 44;
+      const maxW = (mode === "gt") ? 140 : 220;
       w = Math.max(minW, Math.min(maxW, w));
 
-      grid.style.setProperty("--cardW", `${w}px`);
+      document.documentElement.style.setProperty("--cardW", `${w}px`);
     };
 
     requestAnimationFrame(() => {
@@ -640,15 +631,14 @@
       chainBox.style.display = "none";
     } else {
       const n = Number(mode);
-      grid.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
-      grid.style.gridTemplateRows = `repeat(1, minmax(0, 1fr))`;
+      grid.style.gridTemplateColumns = `repeat(${n}, var(--cardW))`;
+      grid.style.gridTemplateRows = `repeat(1, calc(var(--cardW) * var(--ar)))`;
       chainBox.style.display = "none";
     }
   }
 
   function setMode(newMode){
     mode = newMode;
-
     [...spreadButtons.querySelectorAll("button")].forEach(b=>{
       b.classList.toggle("active", b.dataset.mode === mode);
     });
@@ -744,7 +734,6 @@
 
   function renderGrandTableau(gtState){
     grid.innerHTML = "";
-
     for(let house=1; house<=36; house++){
       const cardNo = gtState.cardsByHouse[house];
       const el = createCardEl(cardNo, `H${house}`, (ev)=>{
@@ -761,13 +750,11 @@
         renderChain(chain);
 
         openModal(cardNo, `하우스 H${house}`);
-
         fitCards();
       });
 
       grid.appendChild(el);
     }
-
     fitCards();
   }
 
@@ -801,7 +788,7 @@
     loadQuestion();
     freshDeck();
     await autoDetectBasePath();
-    setMode("1");
+    setMode("1"); // 첫 화면 카드 없음 유지
   })();
 </script>
 </body>
