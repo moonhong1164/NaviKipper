@@ -6,7 +6,6 @@
   <title>KIPPER 카드 뽑기 | 제작 : 월홍🌙</title>
   <style>
     :root{
-      /* ===== Light Mint on White ===== */
       --bg:#f7fffd;
       --panel:#ffffffcc;
       --text:#0f172a;
@@ -15,7 +14,6 @@
 
       --accent:#2dd4bf;
       --accentDeep:#14b8a6;
-      --accentSoft: rgba(45,212,191,.14);
 
       --danger:#fb7185;
 
@@ -35,49 +33,43 @@
       color:var(--text);
     }
 
-    /* ✅ 화면 폭 꽉 채우기: 최대폭 제한 제거 */
-    .wrap{
-      width: 100%;
-      margin: 0;
-      padding: 18px 14px 36px;
-    }
+    .wrap{ width: 100%; margin:0; padding: 14px 12px 28px; }
 
     header{
       display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding: 10px 4px 8px;
+      gap:12px; padding: 8px 2px 6px;
     }
-    h1{margin:0; font-size:22px; letter-spacing:-.2px;}
+    h1{margin:0; font-size:20px; letter-spacing:-.2px;}
 
     .bar{
-      margin-top: 12px;
+      margin-top: 10px;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 12px;
+      padding: 10px;
       backdrop-filter: blur(10px);
     }
 
     .controls{
       display:flex;
       flex-wrap:wrap;
-      gap:10px;
+      gap:8px;
       align-items:flex-start;
       justify-content:space-between;
     }
-
-    .seg{display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+    .seg{display:flex; flex-wrap:wrap; gap:7px; align-items:center;}
 
     button{
       border: 1px solid rgba(15,23,42,.12);
       background: rgba(255,255,255,.92);
       color: var(--text);
-      padding: 10px 12px;
+      padding: 9px 11px;
       border-radius: 999px;
       cursor:pointer;
       transition: transform .08s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease;
       font-weight: 750;
-      font-size: 13px;
+      font-size: 12.5px;
       letter-spacing: -.1px;
       user-select:none;
       box-shadow: 0 6px 18px rgba(15,23,42,.06);
@@ -88,7 +80,6 @@
       box-shadow: 0 10px 24px rgba(15,23,42,.08);
     }
     button:active{ transform: scale(.98); }
-
     button.primary{
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(45,212,191,.70));
       border-color: rgba(20,184,166,.45);
@@ -99,9 +90,7 @@
       border-color: rgba(20,184,166,.60);
       box-shadow: 0 16px 34px rgba(20,184,166,.22);
     }
-
     button.ghost{ background: rgba(255,255,255,.82); }
-
     button.danger{
       background: rgba(251,113,133,.12);
       border-color: rgba(251,113,133,.35);
@@ -112,42 +101,31 @@
       background: rgba(251,113,133,.16);
       border-color: rgba(251,113,133,.45);
     }
-
     button.active{
       outline: 2px solid rgba(20,184,166,.35);
       border-color: rgba(20,184,166,.55);
       background: rgba(45,212,191,.18);
     }
 
-    .rightTools{
-      display:flex; gap:8px;
-      align-items:center; flex-wrap:wrap; justify-content:flex-end;
-    }
+    .rightTools{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
 
-    /* ✅ 질문 입력칸 */
     .questionBox{
       width: 100%;
-      margin-top: 10px;
+      margin-top: 8px;
       display:flex;
-      gap:10px;
+      gap:8px;
       align-items:center;
       flex-wrap:wrap;
     }
-    .qLabel{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 800;
-      letter-spacing: -.1px;
-      padding-left: 2px;
-    }
+    .qLabel{ font-size: 12px; color: var(--muted); font-weight: 800; letter-spacing: -.1px; padding-left: 2px; }
     .qInput{
       flex: 1 1 420px;
       min-width: 220px;
       border-radius: 14px;
       border: 1px solid rgba(15,23,42,.12);
       background: rgba(255,255,255,.92);
-      padding: 10px 12px;
-      font-size: 13px;
+      padding: 9px 11px;
+      font-size: 12.5px;
       outline: none;
       box-shadow: 0 6px 18px rgba(15,23,42,.06);
     }
@@ -157,37 +135,33 @@
     }
 
     .stage{
-      margin-top: 12px;
+      margin-top: 10px;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 14px;
+      padding: 10px;
       overflow:hidden;
       backdrop-filter: blur(10px);
     }
 
-    /* ====== Grid ====== */
     .grid{
       display:grid;
       align-items:start;
-      gap: 10px;
-
-      /* ✅ 가운데 몰지 않기 */
-      --cardW: 120px;
+      gap: 8px;
+      --cardW: 78px; /* 기본값(작게) */
     }
     .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(var(--cardW), 1fr)); }
     .grid.nine{  grid-template-columns: repeat(3, minmax(var(--cardW), 1fr)); }
-    .grid.gt{    grid-template-columns: repeat(9, minmax(var(--cardW), 1fr)); gap: 8px; }
+    .grid.gt{    grid-template-columns: repeat(9, minmax(var(--cardW), 1fr)); gap: 5px; }
 
-    /* ====== Card ====== */
     .card{
       position:relative;
-      border-radius: 16px;
+      border-radius: 14px;
       overflow:hidden;
       border: 1px solid rgba(15,23,42,.10);
       background: rgba(255,255,255,.90);
-      box-shadow: 0 12px 30px rgba(15,23,42,.10);
+      box-shadow: 0 10px 22px rgba(15,23,42,.09);
       cursor:pointer;
       transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease;
       width: 100%;
@@ -198,12 +172,12 @@
       justify-content:center;
     }
     .card:hover{
-      transform: translateY(-2px);
+      transform: translateY(-1px);
       border-color: rgba(20,184,166,.45);
-      box-shadow: 0 16px 40px rgba(15,23,42,.12);
+      box-shadow: 0 14px 30px rgba(15,23,42,.12);
     }
     .card.selected{
-      outline: 3px solid rgba(45,212,191,.35);
+      outline: 3px solid rgba(45,212,191,.30);
       border-color: rgba(20,184,166,.55);
     }
     .card img{
@@ -216,10 +190,10 @@
 
     .badge{
       position:absolute;
-      top:8px; left:8px;
-      font-size: 11px;
+      top:6px; left:6px;
+      font-size: 10.5px;
       font-weight: 900;
-      padding: 6px 8px;
+      padding: 5px 7px;
       border-radius: 999px;
       background: rgba(255,255,255,.72);
       border: 1px solid rgba(15,23,42,.12);
@@ -227,53 +201,34 @@
       backdrop-filter: blur(8px);
     }
 
-    /* ===== Chain ===== */
     .chainBox{
-      margin-top: 14px;
-      padding: 14px;
+      margin-top: 10px;
+      padding: 10px;
       border-radius: var(--radius2);
       background: rgba(45,212,191,.10);
       border: 1px solid rgba(20,184,166,.18);
     }
-    .chainTop{
-      display:flex; justify-content:space-between; align-items:flex-start;
-      gap:10px; flex-wrap:wrap; margin-bottom: 10px;
-    }
-    .chainTitle{margin:0; font-size: 14px; font-weight: 950; letter-spacing: -.1px;}
-    .chainMeta{color: var(--muted); font-size: 12px; line-height:1.35;}
-    .chainRow{display:flex; gap:10px; overflow:auto; padding-bottom: 6px;}
-    .chainRow::-webkit-scrollbar{ height:8px; }
-    .chainRow::-webkit-scrollbar-thumb{ background: rgba(15,23,42,.12); border-radius: 999px; }
+    .chainTop{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom: 8px; }
+    .chainTitle{ margin:0; font-size: 13px; font-weight: 950; letter-spacing: -.1px; }
+    .chainMeta{ color: var(--muted); font-size: 11.5px; line-height:1.35; }
+    .chainRow{ display:flex; gap:8px; overflow:auto; padding-bottom: 6px; }
 
     .mini{
-      width: 84px; min-width: 84px; /* ✅ 체인 미니도 살짝 줄임 */
+      width: 64px; min-width: 64px;
       aspect-ratio: 3/4.6;
-      border-radius: 14px;
+      border-radius: 12px;
       overflow:hidden;
       border: 1px solid rgba(15,23,42,.10);
       background: rgba(255,255,255,.90);
-      box-shadow: 0 10px 24px rgba(15,23,42,.10);
+      box-shadow: 0 10px 24px rgba(15,23,42,.08);
       position:relative;
       display:flex;
       align-items:center;
       justify-content:center;
     }
-    .mini img{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
-      background: linear-gradient(180deg, rgba(45,212,191,.08), rgba(255,255,255,0));
-    }
-    .mini .badge{
-      top:6px; left:6px;
-      font-size: 10px; padding: 5px 7px;
-      background: rgba(255,255,255,.72);
-      border: 1px solid rgba(15,23,42,.12);
-      color: rgba(15,23,42,.86);
-    }
+    .mini img{ width:100%; height:100%; object-fit: contain; display:block; }
+    .mini .badge{ top:5px; left:5px; font-size: 9.5px; padding: 4px 6px; }
 
-    /* ===== Modal ===== */
     .modalBackdrop{
       position:fixed; inset:0;
       background: rgba(15,23,42,.45);
@@ -307,32 +262,11 @@
       aspect-ratio: 3/4.6;
       box-shadow: 0 10px 26px rgba(15,23,42,.12);
     }
-    .modalPreview img{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
-      background: linear-gradient(180deg, rgba(45,212,191,.08), rgba(255,255,255,0));
-    }
-    .modalHeader{
-      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      margin-bottom: 8px;
-    }
-    .modalTitle{
-      margin:0;
-      font-size: 16px;
-      font-weight: 950;
-      letter-spacing: -.2px;
-      line-height: 1.25;
-      color: #0f172a;
-    }
-    .modalSub{
-      margin:6px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.45;
-    }
-    .chipRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+    .modalPreview img{ width:100%; height:100%; object-fit: contain; display:block; }
+    .modalHeader{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom: 8px; }
+    .modalTitle{ margin:0; font-size: 16px; font-weight: 950; letter-spacing: -.2px; line-height: 1.25; color: #0f172a; }
+    .modalSub{ margin:6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .chipRow{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
     .chip{
       font-size: 12px;
       padding: 7px 10px;
@@ -352,11 +286,11 @@
     }
 
     footer{
-      margin-top: 18px;
+      margin-top: 14px;
       text-align:center;
       color: rgba(71,85,105,.9);
       font-size: 12px;
-      padding: 10px 0 0;
+      padding: 8px 0 0;
     }
 
     @media (max-width: 980px){
@@ -390,13 +324,11 @@
           <button data-mode="9">9카드</button>
           <button data-mode="gt">그랑타블로(9×4)</button>
         </div>
-
         <div class="seg">
           <button class="primary" id="btnDraw">뽑기</button>
         </div>
       </div>
 
-      <!-- ✅ 질문 입력칸 -->
       <div class="questionBox">
         <div class="qLabel">질문</div>
         <input id="questionInput" class="qInput" type="text" placeholder="예) 그 사람의 속마음은? / 이번 달 금전 흐름은?" />
@@ -422,7 +354,6 @@
     <footer>제작 : 월홍🌙</footer>
   </div>
 
-  <!-- Modal -->
   <div class="modalBackdrop" id="modalBackdrop" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modalInner">
@@ -447,9 +378,6 @@
   </div>
 
 <script>
-  // =========================================
-  // 이미지 파일명/경로 자동탐색(표시는 안 함)
-  // =========================================
   const TOTAL = 36;
   const FILE_PREFIX = "키퍼-";
   const DIGITS = 3;
@@ -463,9 +391,6 @@
     "../", "../img/", "../images/", "../assets/",
   ];
 
-  // =========================================
-  // 카드명/키워드
-  // =========================================
   const CARD_INFO = {
     1: { en:"Main significator, Male", ko:"주요 인물(남성)", kw:["본인/상대 남성","주인공","중심 인물"] },
     2: { en:"Main significator, Female", ko:"주요 인물(여성)", kw:["본인/상대 여성","주인공","중심 인물"] },
@@ -505,21 +430,13 @@
     36:{ en:"Great water, Hope", ko:"큰 물/희망", kw:["치유","감정의 흐름","희망/영감"] },
   };
 
-  // =========================================
-  // 상태
-  // =========================================
   let mode = "1";
   let deck = [];
   let basePath = null;
+  let gt = null;
 
-  let gt = null; // { cardsByHouse: number[37] }
-
-  // ✅ 체인 길이 설정 UI 없음: 고정값
   const CHAIN_LEN = 8;
 
-  // =========================================
-  // DOM
-  // =========================================
   const grid = document.getElementById("grid");
   const spreadButtons = document.getElementById("spreadButtons");
   const btnDraw = document.getElementById("btnDraw");
@@ -543,16 +460,11 @@
   const btnSaveQuestion = document.getElementById("btnSaveQuestion");
   const btnClearQuestion = document.getElementById("btnClearQuestion");
 
-  // =========================================
-  // 유틸
-  // =========================================
   function pad(n, digits){
     const s = String(n);
     return s.length >= digits ? s : "0".repeat(digits - s.length) + s;
   }
-  function fileName(cardNo){
-    return `${FILE_PREFIX}${pad(cardNo, DIGITS)}.${EXT}`;
-  }
+  function fileName(cardNo){ return `${FILE_PREFIX}${pad(cardNo, DIGITS)}.${EXT}`; }
   function imgSrc(cardNo){
     const bp = basePath ?? "";
     return `${bp}${fileName(cardNo)}`;
@@ -590,44 +502,45 @@
     return false;
   }
 
-  // =========================================
-  // 카드 크기 자동 조절(✅ 더 작게)
-  // =========================================
   function setCardWidth(px){
     grid.style.setProperty("--cardW", `${px}px`);
   }
+
+  /* ✅ 모든 스프레드: 화면 안에 “딱 들어오게” 작게 */
   function applyResponsiveCardSize(){
     const w = window.innerWidth;
 
-    // ✅ 전반적으로 기존보다 더 작게(한 단계 다운)
     if(mode === "gt"){
-      if(w >= 1400) setCardWidth(108);
-      else if(w >= 1100) setCardWidth(98);
-      else if(w >= 980) setCardWidth(90);
-      else if(w >= 720) setCardWidth(84);
-      else setCardWidth(78);
+      // GT는 매우 작게
+      if(w >= 1600) setCardWidth(72);
+      else if(w >= 1400) setCardWidth(66);
+      else if(w >= 1200) setCardWidth(60);
+      else if(w >= 980)  setCardWidth(56);
+      else if(w >= 720)  setCardWidth(52);
+      else               setCardWidth(48);
       return;
     }
 
     if(mode === "9"){
-      if(w >= 1400) setCardWidth(132);
-      else if(w >= 1100) setCardWidth(120);
-      else if(w >= 980) setCardWidth(108);
-      else if(w >= 720) setCardWidth(100);
-      else setCardWidth(90);
+      // 9카드도 “한 화면” 기준으로 더 작게
+      if(w >= 1600) setCardWidth(88);
+      else if(w >= 1400) setCardWidth(82);
+      else if(w >= 1200) setCardWidth(76);
+      else if(w >= 980)  setCardWidth(70);
+      else if(w >= 720)  setCardWidth(64);
+      else               setCardWidth(58);
       return;
     }
 
-    if(w >= 1400) setCardWidth(170);
-    else if(w >= 1100) setCardWidth(150);
-    else if(w >= 980) setCardWidth(132);
-    else if(w >= 720) setCardWidth(118);
-    else setCardWidth(102);
+    // 1/2/3카드도 “너무 큼” 방지용으로 확 줄임
+    if(w >= 1600) setCardWidth(92);
+    else if(w >= 1400) setCardWidth(86);
+    else if(w >= 1200) setCardWidth(80);
+    else if(w >= 980)  setCardWidth(72);
+    else if(w >= 720)  setCardWidth(66);
+    else               setCardWidth(58);
   }
 
-  // =========================================
-  // 질문 저장(localStorage)
-  // =========================================
   const Q_KEY = "navikipper_question_v1";
   function loadQuestion(){
     const v = localStorage.getItem(Q_KEY) || "";
@@ -640,7 +553,6 @@
     qInput.value = "";
     localStorage.removeItem(Q_KEY);
   }
-
   btnSaveQuestion.addEventListener("click", saveQuestion);
   btnClearQuestion.addEventListener("click", clearQuestion);
   qInput.addEventListener("keydown", (e)=>{
@@ -650,9 +562,6 @@
     }
   });
 
-  // =========================================
-  // Modal
-  // =========================================
   function openModal(cardNo, extraLine=""){
     const info = CARD_INFO[cardNo] || { ko:"(정보 없음)", en:"", kw:[] };
     modalImg.src = imgSrc(cardNo);
@@ -679,9 +588,6 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  // =========================================
-  // 렌더
-  // =========================================
   function createCardEl(cardNo, label){
     const el = document.createElement("div");
     el.className = "card";
@@ -735,9 +641,6 @@
     });
   }
 
-  // =========================================
-  // 그랑타블로 9x4: 하우스/체인
-  // =========================================
   function buildGrandTableau(cards36){
     const cardsByHouse = Array(37).fill(0);
     for(let house=1; house<=36; house++){
@@ -758,7 +661,6 @@
 
       const card = gtState.cardsByHouse[currentHouse];
       chain.push({ house: currentHouse, card });
-
       currentHouse = card;
     }
     return chain;
@@ -771,7 +673,6 @@
       chainMeta.textContent = "";
       return;
     }
-
     const start = chain[0];
     chainTitle.textContent = `체인 (시작: H${start.house})`;
     chainMeta.textContent = `H${start.house} → H${start.card} → … (길이 ${chain.length})`;
@@ -826,9 +727,6 @@
     }
   }
 
-  // =========================================
-  // 뽑기
-  // =========================================
   function draw(){
     clearStageOnly();
 
@@ -843,9 +741,6 @@
     renderBasic(take(n));
   }
 
-  // =========================================
-  // 이벤트
-  // =========================================
   spreadButtons.addEventListener("click", (e)=>{
     const btn = e.target.closest("button");
     if(!btn) return;
@@ -858,9 +753,6 @@
 
   window.addEventListener("resize", applyResponsiveCardSize);
 
-  // =========================================
-  // 초기화
-  // =========================================
   (async function init(){
     loadQuestion();
     freshDeck();
