@@ -24,7 +24,7 @@
 
     body{
       margin:0;
-      overflow:auto; /* ✅ 카드가 화면을 넘어도 "잘리지 않게" 기본은 자동 */
+      overflow:hidden; /* ✅ 스크롤 없음 */
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       background:
         radial-gradient(1200px 520px at 18% 8%, rgba(45,212,191,.18), transparent 60%),
@@ -34,17 +34,19 @@
       color:var(--text);
     }
 
+    /* ✅ 화면(100vh) 안에서만 배치 */
     .wrap{
-      min-height: 100vh;
+      height: 100vh;
       width: 100%;
       margin: 0;
-      padding: 14px 12px 26px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
+      padding: 12px 12px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     header{
+      flex: 0 0 auto;
       display:flex; align-items:center; justify-content:space-between;
       gap:10px; padding: 4px 2px 0;
     }
@@ -52,11 +54,12 @@
     .rightTools{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
 
     .bar{
+      flex: 0 0 auto;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 10px;
+      padding: 8px;
       backdrop-filter: blur(10px);
     }
 
@@ -82,12 +85,11 @@
       white-space: nowrap;
     }
     button:hover{
-      background: #ffffff;
+      background:#fff;
       border-color: rgba(20,184,166,.35);
       box-shadow: 0 10px 24px rgba(15,23,42,.08);
     }
-    button:active{transform: scale(.98);}
-
+    button:active{transform:scale(.98)}
     button.primary{
       background: linear-gradient(135deg, rgba(45,212,191,.95), rgba(45,212,191,.70));
       border-color: rgba(20,184,166,.45);
@@ -98,8 +100,7 @@
       border-color: rgba(20,184,166,.60);
       box-shadow: 0 16px 34px rgba(20,184,166,.22);
     }
-
-    button.ghost{ background: rgba(255,255,255,.82); }
+    button.ghost{background: rgba(255,255,255,.82)}
     button.danger{
       background: rgba(251,113,133,.12);
       border-color: rgba(251,113,133,.35);
@@ -112,7 +113,6 @@
       background: rgba(45,212,191,.18);
     }
 
-    /* 질문 입력칸 */
     .questionBox{
       margin-top: 8px;
       display:flex;
@@ -137,47 +137,62 @@
       box-shadow: 0 10px 24px rgba(20,184,166,.14);
     }
 
+    /* ✅ 남은 높이를 stage가 전부 차지 */
     .stage{
+      flex: 1 1 auto;
+      min-height: 0;
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 10px;
+      padding: 8px;
       backdrop-filter: blur(10px);
-      overflow: visible; /* ✅ 카드가 잘리지 않게 */
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      overflow:hidden; /* ✅ 화면 밖으로 나가면 안 되니 stage 내부는 숨김 (대신 JS가 크기 맞춤) */
     }
 
-    /* ✅ 절대 겹치지 않는 그리드(겹침 방지 핵심: gap + minmax + auto-fit) */
+    /* ✅ 그리드가 stage 안에서 늘어나면서 높이/너비를 확보 */
     .grid{
+      flex: 1 1 auto;
+      min-height: 0;
       display:grid;
-      align-items:start;
-      gap: 8px;
-      --cardW: 70px;
-    }
-
-    /* 1/2/3: JS에서 정확히 columns 설정 */
-    .grid.nine{ grid-template-columns: repeat(3, minmax(var(--cardW), 1fr)); }
-    .grid.gt{
-      grid-template-columns: repeat(9, minmax(var(--cardW), 1fr));
       gap: 6px;
+      --cardW: 60px;
+      align-content: start;
+      overflow:hidden;
     }
 
+    /* 모드별 템플릿 */
+    .grid.mode-gt{
+      grid-template-columns: repeat(9, minmax(0, 1fr));
+      grid-template-rows: repeat(4, minmax(0, 1fr)); /* ✅ 9x4 “행”을 고정 => 겹침 방지 */
+      gap: 5px;
+    }
+    .grid.mode-9{
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+    }
+    /* 1/2/3은 JS에서 grid-template-columns 설정 */
+
+    /* 카드(겹침 금지: width 100%, height는 aspect-ratio로) */
     .card{
       position:relative;
+      width: 100%;
+      height: 100%;
       border-radius: 12px;
       overflow:hidden;
       border: 1px solid rgba(15,23,42,.10);
       background: rgba(255,255,255,.90);
       box-shadow: 0 10px 22px rgba(15,23,42,.09);
       cursor:pointer;
-      width: 100%;
-      aspect-ratio: 3 / 4.6;
       display:flex;
       align-items:center;
       justify-content:center;
+      aspect-ratio: 3 / 4.6;
     }
-    .card img{ width:100%; height:100%; object-fit: contain; display:block; }
-
+    .card img{ width:100%; height:100%; object-fit:contain; display:block; }
     .badge{
       position:absolute;
       top:5px; left:5px;
@@ -196,16 +211,18 @@
       border-color: rgba(20,184,166,.55);
     }
 
-    /* 체인 */
+    /* ✅ 체인은 "GT 클릭 후"에만 나타나게 해서 높이 갑자기 먹는 문제 방지 */
     .chainBox{
-      margin-top: 10px;
-      padding: 10px;
+      flex: 0 0 auto;
+      display:none;
+      padding: 8px;
       border-radius: var(--radius2);
       background: rgba(45,212,191,.10);
       border: 1px solid rgba(20,184,166,.18);
-      display:none;
+      max-height: 140px;
+      overflow:hidden;
     }
-    .chainTop{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom: 8px;}
+    .chainTop{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom: 6px;}
     .chainTitle{margin:0; font-size: 12.5px; font-weight: 950;}
     .chainMeta{color: var(--muted); font-size: 11px; line-height:1.35;}
     .chainRow{display:flex; gap:8px; overflow-x:auto; overflow-y:hidden; padding-bottom: 4px;}
@@ -223,10 +240,11 @@
       align-items:center;
       justify-content:center;
     }
-    .mini img{ width:100%; height:100%; object-fit: contain; display:block; }
+    .mini img{ width:100%; height:100%; object-fit:contain; display:block; }
     .mini .badge{ top:4px; left:4px; font-size: 9px; padding: 3px 5px; }
 
     footer{
+      flex: 0 0 auto;
       text-align:center;
       color: rgba(71,85,105,.9);
       font-size: 11.5px;
@@ -267,7 +285,7 @@
       aspect-ratio: 3/4.6;
       box-shadow: 0 10px 26px rgba(15,23,42,.12);
     }
-    .modalPreview img{ width:100%; height:100%; object-fit: contain; display:block; }
+    .modalPreview img{ width:100%; height:100%; object-fit:contain; display:block; }
     .modalHeader{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom: 8px; }
     .modalTitle{ margin:0; font-size: 16px; font-weight: 950; letter-spacing: -.2px; line-height: 1.25; color: #0f172a; }
     .modalSub{ margin:6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
@@ -291,13 +309,20 @@
     }
 
     @media (max-width: 980px){
-      .grid.gt{ grid-template-columns: repeat(6, minmax(var(--cardW), 1fr)); }
+      .grid.mode-gt{
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-rows: auto; /* 모바일은 줄바꿈 */
+      }
     }
     @media (max-width: 640px){
       header{ flex-direction:column; align-items:flex-start; }
-      .grid.gt{ grid-template-columns: repeat(4, minmax(var(--cardW), 1fr)); }
+      .grid.mode-gt{
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-rows: auto;
+      }
       .modalInner{ grid-template-columns: 1fr; }
       .modalPreview{ width: 170px; }
+      .chainBox{ max-height: 130px; }
     }
   </style>
 </head>
@@ -335,7 +360,7 @@
     </section>
 
     <section class="stage" id="stage">
-      <!-- ✅ 첫 화면: 카드 안 보이게 유지 (grid 비움) -->
+      <!-- ✅ 첫 화면: 비어있게(카드 안 보임) -->
       <div class="grid" id="grid"></div>
 
       <div class="chainBox" id="chainBox">
@@ -377,15 +402,11 @@
   </div>
 
 <script>
-  // =========================
-  // 설정
-  // =========================
   const TOTAL = 36;
   const FILE_PREFIX = "키퍼-";
   const DIGITS = 3;
   const EXT = "png";
 
-  // "어디에 넣어도 적용" 자동탐색
   const BASE_PATH_CANDIDATES = [
     "", "./", "img/", "images/", "image/", "assets/", "asset/",
     "cards/", "card/", "kipper/", "Kipper/", "KIPPER/",
@@ -394,7 +415,6 @@
     "../", "../img/", "../images/", "../assets/",
   ];
 
-  // 카드명/키워드 (간단)
   const CARD_INFO = {
     1: { en:"Main significator, Male", ko:"주요 인물(남성)", kw:["본인/상대 남성","주인공","중심 인물"] },
     2: { en:"Main significator, Female", ko:"주요 인물(여성)", kw:["본인/상대 여성","주인공","중심 인물"] },
@@ -434,20 +454,17 @@
     36:{ en:"Great water, Hope", ko:"큰 물/희망", kw:["치유","감정의 흐름","희망/영감"] },
   };
 
-  // =========================
-  // 상태
-  // =========================
   let mode = "1";
   let deck = [];
   let basePath = null;
-
   let gt = null;
-  const CHAIN_LEN = 8;
 
-  // =========================
-  // DOM
-  // =========================
+  const CHAIN_LEN = 8;
+  const CARD_AR = 4.6 / 3; // height = width * CARD_AR
+
   const grid = document.getElementById("grid");
+  const stage = document.getElementById("stage");
+
   const spreadButtons = document.getElementById("spreadButtons");
   const btnDraw = document.getElementById("btnDraw");
   const btnShuffle = document.getElementById("btnShuffle");
@@ -470,9 +487,6 @@
   const btnSaveQuestion = document.getElementById("btnSaveQuestion");
   const btnClearQuestion = document.getElementById("btnClearQuestion");
 
-  // =========================
-  // 유틸
-  // =========================
   function pad(n, digits){
     const s = String(n);
     return s.length >= digits ? s : "0".repeat(digits - s.length) + s;
@@ -514,54 +528,14 @@
     return false;
   }
 
-  // ✅ 카드 크기: "작게" (겹침 방지: 항상 양수/안전값)
-  function setCardWidth(px){
-    grid.style.setProperty("--cardW", `${px}px`);
-  }
-  function applyResponsiveCardSize(){
-    const w = window.innerWidth;
-
-    if(mode === "gt"){
-      // GT는 확실히 작게 (겹치지 않게)
-      if(w >= 1600) setCardWidth(76);
-      else if(w >= 1400) setCardWidth(68);
-      else if(w >= 1200) setCardWidth(60);
-      else if(w >= 980)  setCardWidth(56);
-      else if(w >= 720)  setCardWidth(52);
-      else               setCardWidth(48);
-      return;
-    }
-
-    if(mode === "9"){
-      if(w >= 1600) setCardWidth(96);
-      else if(w >= 1400) setCardWidth(88);
-      else if(w >= 1200) setCardWidth(80);
-      else if(w >= 980)  setCardWidth(72);
-      else if(w >= 720)  setCardWidth(64);
-      else               setCardWidth(58);
-      return;
-    }
-
-    // 1/2/3도 작게
-    if(w >= 1600) setCardWidth(110);
-    else if(w >= 1400) setCardWidth(100);
-    else if(w >= 1200) setCardWidth(92);
-    else if(w >= 980)  setCardWidth(84);
-    else if(w >= 720)  setCardWidth(76);
-    else               setCardWidth(66);
-  }
-
   // 질문 저장
-  const Q_KEY = "navikipper_question_v3";
+  const Q_KEY = "navikipper_question_final";
   function loadQuestion(){ qInput.value = localStorage.getItem(Q_KEY) || ""; }
   function saveQuestion(){ localStorage.setItem(Q_KEY, qInput.value.trim()); }
   function clearQuestion(){ qInput.value = ""; localStorage.removeItem(Q_KEY); }
-
   btnSaveQuestion.addEventListener("click", saveQuestion);
   btnClearQuestion.addEventListener("click", clearQuestion);
-  qInput.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter"){ e.preventDefault(); saveQuestion(); }
-  });
+  qInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter"){ e.preventDefault(); saveQuestion(); } });
 
   // Modal
   function openModal(cardNo, extraLine=""){
@@ -590,7 +564,105 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  // 렌더
+  function setCardWidth(px){
+    grid.style.setProperty("--cardW", `${px}px`);
+  }
+  function getGapPx(el){
+    const cs = getComputedStyle(el);
+    const g = cs.gap || cs.columnGap || "0px";
+    return Math.max(0, parseFloat(g) || 0);
+  }
+
+  /**
+   * ✅ “겹침/잘림”을 완전히 막는 핵심:
+   *  - grid가 차지하는 실제 너비/높이 기준으로
+   *  - cols/rows에 맞는 카드 폭을 계산
+   *  - 안전 마진(SAFE + EXTRA) 적용해서 항상 조금 더 작게
+   */
+  function fitCards(){
+    const doFit = () => {
+      const gridW = grid.clientWidth;
+      const gridH = grid.clientHeight;
+      const gap = getGapPx(grid);
+
+      let cols = 1, rows = 1;
+
+      if(mode === "gt"){
+        cols = 9; rows = 4;
+      } else if(mode === "9"){
+        cols = 3; rows = 3;
+      } else {
+        cols = Number(mode); rows = 1;
+      }
+
+      // 안전 마진 (브라우저 반올림/테두리/배지/폰트 오차 흡수)
+      const SAFE = 0.92;
+      const EXTRA = 10;
+
+      // 가로 기준 가능한 폭
+      const wByWidth = (gridW - gap*(cols-1)) / cols;
+
+      // 세로 기준 가능한 폭 (height = width*CARD_AR)
+      const wByHeight = ((gridH - gap*(rows-1)) / rows) / CARD_AR;
+
+      let w = Math.floor(Math.min(wByWidth, wByHeight) * SAFE) - EXTRA;
+
+      // 너무 작아지면 클릭이 불편하니 최소값만 보장
+      const minW = (mode === "gt") ? 34 : 46;
+      const maxW = (mode === "gt") ? 90 : 130;
+      w = Math.max(minW, Math.min(maxW, w));
+
+      setCardWidth(w);
+    };
+
+    // 레이아웃 확정 후 2프레임 계산(PC에서 특히 안정)
+    requestAnimationFrame(() => {
+      doFit();
+      requestAnimationFrame(doFit);
+    });
+  }
+
+  function clearStageOnly(){
+    grid.innerHTML = "";
+    chainRow.innerHTML = "";
+    chainTitle.textContent = "체인";
+    chainMeta.textContent = "";
+    chainBox.style.display = "none";
+    gt = null;
+  }
+
+  function applyGridTemplate(){
+    grid.className = "grid";
+    grid.style.gridTemplateColumns = "";
+    grid.style.gridTemplateRows = "";
+
+    if(mode === "gt"){
+      grid.classList.add("mode-gt");
+      // 체인은 GT 뽑고 카드 클릭했을 때만 보여줌(높이 먹는 거 방지)
+      chainBox.style.display = "none";
+    } else if(mode === "9"){
+      grid.classList.add("mode-9");
+      chainBox.style.display = "none";
+    } else {
+      const n = Number(mode);
+      grid.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+      grid.style.gridTemplateRows = `repeat(1, minmax(0, 1fr))`;
+      chainBox.style.display = "none";
+    }
+  }
+
+  function setMode(newMode){
+    mode = newMode;
+
+    [...spreadButtons.querySelectorAll("button")].forEach(b=>{
+      b.classList.toggle("active", b.dataset.mode === mode);
+    });
+
+    applyGridTemplate();
+    clearStageOnly();   // ✅ 모드 바꾸면 항상 비움(첫 화면/전환 시 카드 노출 X)
+    fitCards();         // ✅ 그리드 크기 계산 준비
+  }
+
   function createCardEl(cardNo, label, onClick){
     const el = document.createElement("div");
     el.className = "card";
@@ -610,53 +682,14 @@
     return el;
   }
 
-  function clearStageOnly(){
-    grid.innerHTML = "";
-    chainRow.innerHTML = "";
-    chainTitle.textContent = "체인";
-    chainMeta.textContent = "";
-    chainBox.style.display = "none";
-    gt = null;
-  }
-
-  function applyGridTemplate(){
-    grid.className = "grid";
-    grid.style.gridTemplateColumns = "";
-
-    if(mode === "gt"){
-      grid.classList.add("gt");
-      chainBox.style.display = "block";
-    } else if(mode === "9"){
-      grid.classList.add("nine");
-      chainBox.style.display = "none";
-    } else {
-      const n = Number(mode);
-      // ✅ 1/2/3은 한 줄에
-      grid.style.gridTemplateColumns = `repeat(${n}, minmax(var(--cardW), 1fr))`;
-      chainBox.style.display = "none";
-    }
-  }
-
-  function setMode(newMode){
-    mode = newMode;
-
-    [...spreadButtons.querySelectorAll("button")].forEach(b=>{
-      b.classList.toggle("active", b.dataset.mode === mode);
-    });
-
-    applyGridTemplate();
-    applyResponsiveCardSize();
-    clearStageOnly(); // ✅ 첫 화면 카드 안 보이게 유지
-  }
-
   function renderBasic(cards){
     grid.innerHTML = "";
     cards.forEach((no, idx)=>{
       grid.appendChild(createCardEl(no, `${idx+1}`, ()=> openModal(no)));
     });
+    fitCards();
   }
 
-  // GT 하우스/체인
   function buildGrandTableau(cards36){
     const cardsByHouse = Array(37).fill(0);
     for(let house=1; house<=36; house++){
@@ -689,6 +722,7 @@
       chainMeta.textContent = "";
       return;
     }
+
     const start = chain[0];
     chainTitle.textContent = `체인 (시작: H${start.house})`;
     chainMeta.textContent = `H${start.house} → H${start.card} → … (길이 ${chain.length})`;
@@ -715,26 +749,37 @@
 
   function renderGrandTableau(gtState){
     grid.innerHTML = "";
-    chainBox.style.display = "block";
 
     for(let house=1; house<=36; house++){
       const cardNo = gtState.cardsByHouse[house];
       const el = createCardEl(cardNo, `H${house}`, (ev)=>{
         ev.stopPropagation();
+
         document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
         el.classList.add("selected");
+
+        // ✅ 클릭 후에만 체인 박스 표시
+        if(chainBox.style.display !== "block"){
+          chainBox.style.display = "block";
+        }
 
         const chain = buildHouseChain(gtState, house, CHAIN_LEN);
         renderChain(chain);
 
         openModal(cardNo, `하우스 H${house}`);
+
+        // ✅ 체인 박스가 생기면 그리드 높이가 줄어드니 다시 맞춤
+        fitCards();
       });
 
       grid.appendChild(el);
     }
+
+    fitCards();
   }
 
   function draw(){
+    // 뽑기 눌러야만 카드가 뜸(첫 화면 유지)
     clearStageOnly();
 
     if(mode === "gt"){
@@ -756,26 +801,17 @@
   });
 
   btnDraw.addEventListener("click", draw);
+  btnShuffle.addEventListener("click", ()=> freshDeck());
+  btnClear.addEventListener("click", ()=> clearStageOnly());
 
-  btnShuffle.addEventListener("click", ()=>{
-    freshDeck();
-    // 현재 화면은 유지(카드 비우지는 않음)
-  });
-
-  btnClear.addEventListener("click", ()=>{
-    clearStageOnly();
-  });
-
-  window.addEventListener("resize", ()=>{
-    applyResponsiveCardSize();
-  });
+  window.addEventListener("resize", ()=> fitCards());
 
   // 초기화
   (async function init(){
     loadQuestion();
     freshDeck();
     await autoDetectBasePath();
-    setMode("1"); // ✅ 첫 화면: 카드 안 보이게 유지
+    setMode("1"); // ✅ 첫 화면 카드 안 보이게(여기서 draw() 호출 안 함)
   })();
 </script>
 </body>
