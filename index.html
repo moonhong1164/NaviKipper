@@ -17,10 +17,6 @@
       --danger:#fb7185;
       --shadow: 0 12px 40px rgba(15,23,42,.10);
       --radius2: 18px;
-
-      /* ✅ 카드 비율 (height = width * 1.533333...) */
-      --ar: 1.533333;
-      --cardW: 60px; /* JS가 자동으로 바꿔줌 */
     }
 
     *{box-sizing:border-box}
@@ -140,6 +136,7 @@
       box-shadow: 0 10px 24px rgba(20,184,166,.14);
     }
 
+    /* ✅ stage 내부 여백 제거(카드 붙이기 핵심) */
     .stage{
       flex: 1 1 auto;
       min-height: 0;
@@ -147,40 +144,39 @@
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 8px;
+      padding: 0;              /* ✅ 8px -> 0 */
       backdrop-filter: blur(10px);
       display:flex;
       flex-direction:column;
-      gap:8px;
+      gap:0;                   /* ✅ 8px -> 0 */
       overflow:hidden;
     }
 
-    /* ✅ 핵심: 그리드 셀 자체를 카드 비율로 고정 → 여백/늘어짐/겹침 방지 */
+    /* ✅ 그리드: gap 0 + 셀을 1fr로 꽉 채움(칸 남는 여백 제거) */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
+      width:100%;
+      height:100%;
       display:grid;
-      gap: 0;                 /* ✅ 카드 간격 0 */
-      align-content: start;
-      justify-content: start;
+      gap: 0;                  /* ✅ 카드 간격 0 */
       overflow:hidden;
-      grid-auto-rows: calc(var(--cardW) * var(--ar)); /* ✅ 셀 높이 = 카드 비율 */
     }
 
     .grid.mode-gt{
-      grid-template-columns: repeat(9, var(--cardW));
-      grid-template-rows: repeat(4, calc(var(--cardW) * var(--ar)));
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(4, 1fr);
     }
     .grid.mode-9{
-      grid-template-columns: repeat(3, var(--cardW));
-      grid-template-rows: repeat(3, calc(var(--cardW) * var(--ar)));
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
     }
 
-    /* ✅ 카드 박스 제거, 셀에 딱 맞게 */
+    /* ✅ 카드 흰 박스 완전 제거 + 셀 100% 채우기 */
     .card{
       position:relative;
-      width: var(--cardW);
-      height: calc(var(--cardW) * var(--ar));
+      width: 100%;
+      height: 100%;
       border-radius: 0;
       overflow:hidden;
       border: none;
@@ -192,14 +188,15 @@
       justify-content:center;
     }
 
-    /* ✅ 여백 “절대” 안 생기게: cover로 칸을 꽉 채움
-       (셀 비율을 카드랑 맞춰놔서, 사실상 잘림도 거의 없음) */
+    /* ✅ 셀을 “무조건” 꽉 채우기 + 1px 실금(서브픽셀) 방지용 살짝 확대 */
     .card img{
       width:100%;
       height:100%;
-      object-fit: cover;
-      object-position: center;
+      object-fit: cover;        /* ✅ contain -> cover */
+      object-position:center;
       display:block;
+      transform: scale(1.01);   /* ✅ 1px 틈 방지 */
+      transform-origin:center;
     }
 
     .badge{
@@ -217,7 +214,6 @@
     }
     .card.selected{
       outline: 3px solid rgba(45,212,191,.28);
-      border-color: rgba(20,184,166,.55);
     }
 
     .chainBox{
@@ -237,7 +233,7 @@
 
     .mini{
       width: 58px; min-width: 58px;
-      height: calc(58px * var(--ar));
+      aspect-ratio: 3/4.6;
       border-radius: 0;
       overflow:hidden;
       border: none;
@@ -252,7 +248,6 @@
       width:100%;
       height:100%;
       object-fit: cover;
-      object-position: center;
       display:block;
     }
     .mini .badge{ top:4px; left:4px; font-size: 9px; padding: 3px 5px; }
@@ -299,12 +294,7 @@
       aspect-ratio: 3/4.6;
       box-shadow: 0 10px 26px rgba(15,23,42,.12);
     }
-    .modalPreview img{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
-    }
+    .modalPreview img{ width:100%; height:100%; object-fit:contain; display:block; }
     .modalHeader{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom: 8px; }
     .modalTitle{ margin:0; font-size: 16px; font-weight: 950; letter-spacing: -.2px; line-height: 1.25; color: #0f172a; }
     .modalSub{ margin:6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
@@ -327,18 +317,20 @@
       background: rgba(255,255,255,.75);
     }
 
-    /* ✅ 모바일은 9x4 그대로 유지하면 너무 작아서 cols만 줄이고 “붙이는 성질”은 유지 */
+    /* ✅ 모바일은 기존처럼 줄바꿈(대신 여백/간격은 0 유지) */
     @media (max-width: 980px){
       .grid.mode-gt{
-        grid-template-columns: repeat(6, var(--cardW));
-        grid-template-rows: none;
-        grid-auto-rows: calc(var(--cardW) * var(--ar));
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: auto;
+        grid-auto-rows: 1fr;
       }
     }
     @media (max-width: 640px){
       header{ flex-direction:column; align-items:flex-start; }
       .grid.mode-gt{
-        grid-template-columns: repeat(4, var(--cardW));
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        grid-auto-rows: 1fr;
       }
       .modalInner{ grid-template-columns: 1fr; }
       .modalPreview{ width: 170px; }
@@ -477,9 +469,6 @@
   let basePath = null;
   let gt = null;
 
-  const CHAIN_LEN = 8;
-  const CARD_AR = 4.6 / 3;
-
   const grid = document.getElementById("grid");
   const spreadButtons = document.getElementById("spreadButtons");
   const btnDraw = document.getElementById("btnDraw");
@@ -578,37 +567,6 @@
   modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
   window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
-  function fitCards(){
-    const doFit = () => {
-      const gridW = grid.clientWidth;
-      const gridH = grid.clientHeight;
-
-      let cols = 1, rows = 1;
-      if(mode === "gt"){ cols = 9; rows = 4; }
-      else if(mode === "9"){ cols = 3; rows = 3; }
-      else { cols = Number(mode); rows = 1; }
-
-      const SAFE = 0.98;  // ✅ 간격 0이니까 더 꽉 써도 됨
-      const EXTRA = 0;
-
-      const wByWidth  = (gridW) / cols;
-      const wByHeight = (gridH) / rows / CARD_AR;
-
-      let w = Math.floor(Math.min(wByWidth, wByHeight) * SAFE) - EXTRA;
-
-      const minW = (mode === "gt") ? 30 : 44;
-      const maxW = (mode === "gt") ? 140 : 220;
-      w = Math.max(minW, Math.min(maxW, w));
-
-      document.documentElement.style.setProperty("--cardW", `${w}px`);
-    };
-
-    requestAnimationFrame(() => {
-      doFit();
-      requestAnimationFrame(doFit);
-    });
-  }
-
   function clearStageOnly(){
     grid.innerHTML = "";
     chainRow.innerHTML = "";
@@ -631,21 +589,21 @@
       chainBox.style.display = "none";
     } else {
       const n = Number(mode);
-      grid.style.gridTemplateColumns = `repeat(${n}, var(--cardW))`;
-      grid.style.gridTemplateRows = `repeat(1, calc(var(--cardW) * var(--ar)))`;
+      grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+      grid.style.gridTemplateRows = `repeat(1, 1fr)`;
       chainBox.style.display = "none";
     }
   }
 
   function setMode(newMode){
     mode = newMode;
+
     [...spreadButtons.querySelectorAll("button")].forEach(b=>{
       b.classList.toggle("active", b.dataset.mode === mode);
     });
 
     applyGridTemplate();
     clearStageOnly();
-    fitCards();
   }
 
   function createCardEl(cardNo, label, onClick){
@@ -672,7 +630,6 @@
     cards.forEach((no, idx)=>{
       grid.appendChild(createCardEl(no, `${idx+1}`, ()=> openModal(no)));
     });
-    fitCards();
   }
 
   function buildGrandTableau(cards36){
@@ -734,6 +691,7 @@
 
   function renderGrandTableau(gtState){
     grid.innerHTML = "";
+
     for(let house=1; house<=36; house++){
       const cardNo = gtState.cardsByHouse[house];
       const el = createCardEl(cardNo, `H${house}`, (ev)=>{
@@ -746,16 +704,14 @@
           chainBox.style.display = "block";
         }
 
-        const chain = buildHouseChain(gtState, house, CHAIN_LEN);
+        const chain = buildHouseChain(gtState, house, 8);
         renderChain(chain);
 
         openModal(cardNo, `하우스 H${house}`);
-        fitCards();
       });
 
       grid.appendChild(el);
     }
-    fitCards();
   }
 
   function draw(){
@@ -778,17 +734,15 @@
     setMode(btn.dataset.mode);
   });
 
-  btnDraw.addEventListener("click", draw);
-  btnShuffle.addEventListener("click", ()=> freshDeck());
-  btnClear.addEventListener("click", ()=> clearStageOnly());
-
-  window.addEventListener("resize", ()=> fitCards());
+  document.getElementById("btnDraw").addEventListener("click", draw);
+  document.getElementById("btnShuffle").addEventListener("click", ()=> freshDeck());
+  document.getElementById("btnClear").addEventListener("click", ()=> clearStageOnly());
 
   (async function init(){
     loadQuestion();
     freshDeck();
     await autoDetectBasePath();
-    setMode("1"); // 첫 화면 카드 없음 유지
+    setMode("1");
   })();
 </script>
 </body>
