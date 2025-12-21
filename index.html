@@ -8,21 +8,15 @@
   <style>
     :root{
       --bg:#FCF9EA;
-
       --panel:#ffffffcc;
       --text:#0f172a;
       --muted:#475569;
       --line: rgba(15,23,42,.10);
-
       --accent:#2dd4bf;
       --accentDeep:#14b8a6;
       --danger:#fb7185;
-
       --shadow: 0 12px 40px rgba(15,23,42,.10);
       --radius2: 18px;
-
-      /* 카드 비율 (PNG 비율과 맞춰서 “안 잘리고” 꽉 차게) */
-      --ar: 4.6; /* height = width * (4.6/3) */
     }
 
     *{box-sizing:border-box}
@@ -30,7 +24,7 @@
 
     body{
       margin:0;
-      overflow:hidden; /* 스크롤 없음 */
+      overflow:hidden;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
       background:
         radial-gradient(1200px 520px at 18% 8%, rgba(45,212,191,.18), transparent 60%),
@@ -142,7 +136,7 @@
       box-shadow: 0 10px 24px rgba(20,184,166,.14);
     }
 
-    /* ✅ stage: 내부 padding 0 (카드가 “붙을” 공간 확보) */
+    /* ✅ stage 내부 여백 제거(카드 붙이기 핵심) */
     .stage{
       flex: 1 1 auto;
       min-height: 0;
@@ -150,7 +144,7 @@
       border: 1px solid var(--line);
       border-radius: var(--radius2);
       box-shadow: var(--shadow);
-      padding: 0;            /* 핵심 */
+      padding: 0;
       backdrop-filter: blur(10px);
       display:flex;
       flex-direction:column;
@@ -158,50 +152,66 @@
       overflow:hidden;
     }
 
-    /* ✅ grid: “칸 여백” 자체가 생기지 않게 픽셀 트랙을 JS로 설정 */
+    /* ✅ 그리드: gap 0 + 셀을 1fr로 꽉 채움 */
     .grid{
       flex: 1 1 auto;
       min-height: 0;
       width:100%;
       height:100%;
       display:grid;
-      gap:0;                 /* 카드 간격 0 */
+      gap: 0;
       overflow:hidden;
-      align-content:start;
-      justify-content:start;
-      /* JS가 아래를 세팅:
-         grid-template-columns / rows
-      */
+      justify-content:center; /* 기본은 가운데(가로) */
     }
 
-    /* ✅ 카드: 흰 박스/테두리/그림자 제거 + 셀 100% */
+    /* ✅ 결과 가운데 정렬(세로/가로) */
+    .grid.centered{
+      align-content:center;
+      justify-content:center;
+    }
+    /* ✅ GT에서 체인 뜰 땐 위로(세로) */
+    .grid.topped{
+      align-content:start;
+      justify-content:center;
+    }
+
+    .grid.mode-gt{
+      grid-template-columns: repeat(9, 1fr);
+      grid-template-rows: repeat(4, 1fr);
+    }
+    .grid.mode-9{
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+    }
+
+    /* ✅ 카드 흰 박스 완전 제거 + 셀 100% 채우기 */
     .card{
       position:relative;
-      width:100%;
-      height:100%;
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      overflow:hidden;
       border: none;
       background: transparent;
       box-shadow: none;
-      border-radius: 0;
-      overflow:hidden;
       cursor:pointer;
       display:flex;
-      align-items:stretch;
-      justify-content:stretch;
+      align-items:center;
+      justify-content:center;
     }
 
-    /* ✅ 잘림 방지(=contain) + 카드가 셀을 꽉 채우도록(셀 자체가 카드 비율) */
+    /* ✅ 기본: 카드가 안 잘리게(여백이 생길 수 있음) */
     .card img{
       width:100%;
       height:100%;
-      object-fit: contain;     /* 안 잘림 */
+      object-fit: contain;
       object-position:center;
       display:block;
     }
 
     .badge{
       position:absolute;
-      top:6px; left:6px;
+      top:5px; left:5px;
       font-size: 10px;
       font-weight: 900;
       padding: 4px 6px;
@@ -216,13 +226,14 @@
       outline: 3px solid rgba(45,212,191,.28);
     }
 
-    /* ✅ 체인: GT에서 카드 클릭해야만 등장 */
     .chainBox{
       flex: 0 0 auto;
       display:none;
       padding: 8px;
-      border-top: 1px solid rgba(15,23,42,.08);
-      background: rgba(45,212,191,.07);
+      border-radius: var(--radius2);
+      background: rgba(45,212,191,.10);
+      border: 1px solid rgba(20,184,166,.18);
+      max-height: 140px;
       overflow:hidden;
     }
     .chainTop{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap; margin-bottom: 6px;}
@@ -235,7 +246,7 @@
       aspect-ratio: 3/4.6;
       border-radius: 0;
       overflow:hidden;
-      border:none;
+      border: none;
       background: transparent;
       box-shadow: none;
       position:relative;
@@ -243,7 +254,12 @@
       align-items:center;
       justify-content:center;
     }
-    .mini img{ width:100%; height:100%; object-fit:contain; display:block; }
+    .mini img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+    }
     .mini .badge{ top:4px; left:4px; font-size: 9px; padding: 3px 5px; }
 
     footer{
@@ -311,10 +327,24 @@
       background: rgba(255,255,255,.75);
     }
 
-    @media (max-width: 720px){
+    /* ✅ 모바일은 기존처럼 줄바꿈 */
+    @media (max-width: 980px){
+      .grid.mode-gt{
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: auto;
+        grid-auto-rows: 1fr;
+      }
+    }
+    @media (max-width: 640px){
       header{ flex-direction:column; align-items:flex-start; }
+      .grid.mode-gt{
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: auto;
+        grid-auto-rows: 1fr;
+      }
       .modalInner{ grid-template-columns: 1fr; }
       .modalPreview{ width: 170px; }
+      .chainBox{ max-height: 130px; }
     }
   </style>
 </head>
@@ -352,7 +382,7 @@
     </section>
 
     <section class="stage" id="stage">
-      <!-- ✅ 첫 화면 카드 안 보임(뽑기 눌러야만 표시) -->
+      <!-- ✅ 첫 화면: 비어있게(카드 안 보임) -->
       <div class="grid" id="grid"></div>
 
       <div class="chainBox" id="chainBox">
@@ -399,7 +429,6 @@
   const DIGITS = 3;
   const EXT = "png";
 
-  /* ✅ 어디에 넣어도 자동 탐색 */
   const BASE_PATH_CANDIDATES = [
     "", "./", "img/", "images/", "image/", "assets/", "asset/",
     "cards/", "card/", "kipper/", "Kipper/", "KIPPER/",
@@ -449,16 +478,11 @@
 
   let mode = "1";
   let deck = [];
-  let basePath = "";
+  let basePath = null;
   let gt = null;
 
   const grid = document.getElementById("grid");
-  const stage = document.getElementById("stage");
-
   const spreadButtons = document.getElementById("spreadButtons");
-  const btnDraw = document.getElementById("btnDraw");
-  const btnShuffle = document.getElementById("btnShuffle");
-  const btnClear = document.getElementById("btnClear");
 
   const chainBox = document.getElementById("chainBox");
   const chainRow = document.getElementById("chainRow");
@@ -477,14 +501,12 @@
   const btnSaveQuestion = document.getElementById("btnSaveQuestion");
   const btnClearQuestion = document.getElementById("btnClearQuestion");
 
-  const AR = 4.6 / 3; // height = width * AR
-
   function pad(n, digits){
     const s = String(n);
     return s.length >= digits ? s : "0".repeat(digits - s.length) + s;
   }
   function fileName(cardNo){ return `${FILE_PREFIX}${pad(cardNo, DIGITS)}.${EXT}`; }
-  function imgSrc(cardNo){ return `${basePath}${fileName(cardNo)}`; }
+  function imgSrc(cardNo){ return `${basePath ?? ""}${fileName(cardNo)}`; }
 
   function shuffle(arr){
     for(let i=arr.length-1; i>0; i--){
@@ -520,7 +542,7 @@
     return false;
   }
 
-  /* 질문 저장 */
+  // 질문 저장
   const Q_KEY = "navikipper_question_final";
   function loadQuestion(){ qInput.value = localStorage.getItem(Q_KEY) || ""; }
   function saveQuestion(){ localStorage.setItem(Q_KEY, qInput.value.trim()); }
@@ -529,7 +551,7 @@
   btnClearQuestion.addEventListener("click", clearQuestion);
   qInput.addEventListener("keydown", (e)=>{ if(e.key === "Enter"){ e.preventDefault(); saveQuestion(); } });
 
-  /* Modal */
+  // Modal
   function openModal(cardNo, extraLine=""){
     const info = CARD_INFO[cardNo] || { ko:"(정보 없음)", en:"", kw:[] };
     modalImg.src = imgSrc(cardNo);
@@ -563,41 +585,46 @@
     chainMeta.textContent = "";
     chainBox.style.display = "none";
     gt = null;
-    layoutGrid(); // 빈 화면에서도 레이아웃 유지
+
+    // ✅ GT에서도 “뽑기 전”엔 가운데 정렬로
+    layoutGrid();
   }
 
-  function getLayout(){
-    if(mode === "gt") return { cols: 9, rows: 4 };
-    if(mode === "9")  return { cols: 3, rows: 3 };
-    return { cols: Number(mode), rows: 1 };
+  function applyGridTemplate(){
+    grid.className = "grid";
+    grid.style.gridTemplateColumns = "";
+    grid.style.gridTemplateRows = "";
+
+    if(mode === "gt"){
+      grid.classList.add("mode-gt");
+      chainBox.style.display = "none";
+    } else if(mode === "9"){
+      grid.classList.add("mode-9");
+      chainBox.style.display = "none";
+    } else {
+      const n = Number(mode);
+      grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+      grid.style.gridTemplateRows = `repeat(1, 1fr)`;
+      chainBox.style.display = "none";
+    }
   }
 
-  /* ✅ 여백(칸) 자체가 생기지 않게 “픽셀 트랙”으로 고정 */
+  // ✅ 핵심: 뽑기 결과는 가운데 / GT에서 체인 뜨면 위로
   function layoutGrid(){
-    const { cols, rows } = getLayout();
+    grid.classList.remove("centered","topped");
 
-    // chainBox가 보이면 grid 높이가 줄어드니 실제 grid 영역을 기준으로 계산
-    const gridW = grid.clientWidth;
-    const gridH = grid.clientHeight;
+    const hasCards = grid.children.length > 0;
+    const chainVisible = (chainBox.style.display === "block");
 
-    if(gridW <= 0 || gridH <= 0) return;
-
-    // 카드 폭 후보 (가로로 꽉 채우는 기준)
-    const w1 = Math.floor(gridW / cols);
-
-    // 카드 폭 후보 (세로로 꽉 채우는 기준) : height = width*AR
-    const w2 = Math.floor((gridH / rows) / AR);
-
-    // 둘 중 더 작은 걸로 “안 잘리고, 모두 보이게”
-    let cw = Math.max(1, Math.min(w1, w2));
-    let ch = Math.max(1, Math.floor(cw * AR));
-
-    // 서브픽셀 틈 방지 (정수 보정)
-    cw = Math.floor(cw);
-    ch = Math.floor(ch);
-
-    grid.style.gridTemplateColumns = `repeat(${cols}, ${cw}px)`;
-    grid.style.gridTemplateRows    = `repeat(${rows}, ${ch}px)`;
+    if(mode === "gt"){
+      // GT는: 뽑기 전(카드 없을 때)도 가운데,
+      // 뽑은 뒤 카드가 있고 체인이 뜨면 위로
+      if(hasCards && chainVisible) grid.classList.add("topped");
+      else grid.classList.add("centered");
+    } else {
+      // 1/2/3/9는 항상 가운데
+      grid.classList.add("centered");
+    }
   }
 
   function setMode(newMode){
@@ -607,11 +634,8 @@
       b.classList.toggle("active", b.dataset.mode === mode);
     });
 
-    // 모드 바꿨을 때는 항상 “첫 화면처럼” 비움
-    clearStageOnly();
-
-    // 레이아웃 재계산(2프레임)
-    requestAnimationFrame(()=>{ layoutGrid(); requestAnimationFrame(layoutGrid); });
+    applyGridTemplate();
+    clearStageOnly(); // 안에서 layoutGrid()까지 호출됨
   }
 
   function createCardEl(cardNo, label, onClick){
@@ -628,6 +652,7 @@
 
     el.appendChild(img);
     el.appendChild(badge);
+
     el.addEventListener("click", onClick);
     return el;
   }
@@ -637,9 +662,7 @@
     cards.forEach((no, idx)=>{
       grid.appendChild(createCardEl(no, `${idx+1}`, ()=> openModal(no)));
     });
-
-    // 렌더 이후 레이아웃 재계산
-    requestAnimationFrame(()=>{ layoutGrid(); requestAnimationFrame(layoutGrid); });
+    layoutGrid(); // ✅ 가운데 정렬
   }
 
   function buildGrandTableau(cards36){
@@ -650,25 +673,19 @@
     return { cardsByHouse };
   }
 
-  /* ✅ 체인 길이 “설정 없이” : 루프/범위 밖/중복 하우스 나오면 종료 */
-  function buildHouseChain(gtState, startHouse){
+  function buildHouseChain(gtState, startHouse, len){
     const chain = [];
     const seenHouses = new Set();
     let currentHouse = startHouse;
 
-    while(true){
+    while(chain.length < len){
       if(currentHouse < 1 || currentHouse > 36) break;
       if(seenHouses.has(currentHouse)) break;
       seenHouses.add(currentHouse);
 
       const card = gtState.cardsByHouse[currentHouse];
       chain.push({ house: currentHouse, card });
-
-      // 다음 하우스 = 현재 하우스에 놓인 카드 번호
       currentHouse = card;
-
-      // 혹시 이상 데이터 대비
-      if(chain.length > 60) break;
     }
     return chain;
   }
@@ -683,7 +700,7 @@
 
     const start = chain[0];
     chainTitle.textContent = `체인 (시작: H${start.house})`;
-    chainMeta.textContent = `길이 ${chain.length} · H${start.house} → H${start.card} → …`;
+    chainMeta.textContent = `H${start.house} → H${start.card} → … (길이 ${chain.length})`;
 
     chain.forEach((step)=>{
       const mini = document.createElement("div");
@@ -716,27 +733,26 @@
         document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
         el.classList.add("selected");
 
-        // ✅ 클릭 후에만 체인 표시
         if(chainBox.style.display !== "block"){
           chainBox.style.display = "block";
-          // 체인 생기면 grid 높이가 변하므로 재계산
-          requestAnimationFrame(()=>{ layoutGrid(); requestAnimationFrame(layoutGrid); });
         }
 
-        const chain = buildHouseChain(gtState, house);
+        const chain = buildHouseChain(gtState, house, 8);
         renderChain(chain);
 
         openModal(cardNo, `하우스 H${house}`);
+
+        layoutGrid(); // ✅ 체인 뜨면 GT는 위로 정렬
       });
 
       grid.appendChild(el);
     }
 
-    requestAnimationFrame(()=>{ layoutGrid(); requestAnimationFrame(layoutGrid); });
+    layoutGrid(); // ✅ GT 뽑은 직후(체인 아직 없음)엔 가운데
   }
 
   function draw(){
-    clearStageOnly(); // 뽑기 전 화면 정리
+    clearStageOnly();
 
     if(mode === "gt"){
       const cards = take(36);
@@ -749,29 +765,21 @@
     renderBasic(take(n));
   }
 
-  // 이벤트
   spreadButtons.addEventListener("click", (e)=>{
     const btn = e.target.closest("button");
     if(!btn) return;
     setMode(btn.dataset.mode);
   });
 
-  btnDraw.addEventListener("click", draw);
-  btnShuffle.addEventListener("click", ()=> freshDeck());
-  btnClear.addEventListener("click", ()=> clearStageOnly());
+  document.getElementById("btnDraw").addEventListener("click", draw);
+  document.getElementById("btnShuffle").addEventListener("click", ()=> freshDeck());
+  document.getElementById("btnClear").addEventListener("click", ()=> clearStageOnly());
 
-  window.addEventListener("resize", ()=>{
-    requestAnimationFrame(()=>{ layoutGrid(); requestAnimationFrame(layoutGrid); });
-  });
-
-  // 초기화
   (async function init(){
     loadQuestion();
     freshDeck();
     await autoDetectBasePath();
-    setMode("1"); // ✅ 첫 화면 카드 안 보임 유지
-    // 첫 레이아웃 계산
-    requestAnimationFrame(()=>{ layoutGrid(); requestAnimationFrame(layoutGrid); });
+    setMode("1"); // 뽑기 전엔 카드 없음 + 가운데 정렬
   })();
 </script>
 </body>
