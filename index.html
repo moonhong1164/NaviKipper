@@ -19,7 +19,6 @@
       --danger:#fb7185;
 
       --shadow: 0 14px 50px rgba(0,0,0,.48);
-      --radius: 18px;
       --radius2: 22px;
       --max: 1100px;
     }
@@ -39,12 +38,10 @@
     .wrap{max-width: var(--max); margin: 0 auto; padding: 22px 16px 40px;}
 
     header{
-      display:flex; align-items:flex-end; justify-content:space-between;
+      display:flex; align-items:center; justify-content:space-between;
       gap:12px; padding: 14px 8px 10px;
     }
-    .title{display:flex; flex-direction:column; gap:6px;}
     h1{margin:0; font-size:24px; letter-spacing:-.2px;}
-    .sub{margin:0; color:var(--muted); font-size:13px; line-height:1.35;}
 
     .bar{
       margin-top: 14px;
@@ -92,25 +89,6 @@
 
     .rightTools{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
 
-    .hint{
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.4;
-      padding: 0 4px;
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-    }
-    .pill{
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-      padding: 6px 10px;
-      border-radius:999px;
-      font-size:12px;
-      color: rgba(234,255,251,.80);
-    }
-    .pill.ok{ border-color: rgba(52,211,153,.55); background: rgba(52,211,153,.12); }
-    .pill.bad{ border-color: rgba(251,113,133,.55); background: rgba(251,113,133,.12); }
-
     .stage{
       margin-top: 14px;
       background: var(--panel);
@@ -121,31 +99,58 @@
       overflow:hidden;
     }
 
-    .grid{display:grid; gap: 10px; justify-content:center; align-items:start;}
-    .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(120px, 120px)); }
-    .grid.nine{ grid-template-columns: repeat(3, minmax(110px, 130px)); }
-    .grid.gt{ grid-template-columns: repeat(9, minmax(78px, 1fr)); gap: 8px; }
+    /* ====== Grid ====== */
+    .grid{
+      display:grid;
+      justify-content:center;
+      align-items:start;
+      gap: 10px;
+    }
 
+    /* 카드 폭을 CSS 변수로 관리(모드별로 JS에서 바꿔줌) */
+    .grid{
+      --cardW: 120px; /* 기본값 */
+    }
+
+    .grid.basic{ grid-template-columns: repeat(auto-fit, minmax(var(--cardW), var(--cardW))); }
+    .grid.nine{  grid-template-columns: repeat(3, minmax(var(--cardW), var(--cardW))); }
+    .grid.gt{    grid-template-columns: repeat(9, minmax(var(--cardW), 1fr)); gap: 8px; }
+
+    /* ====== Card ====== */
     .card{
       position:relative;
       border-radius: 14px;
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.04);
+      background: rgba(255,255,255,.05);
       box-shadow: 0 10px 30px rgba(0,0,0,.35);
       cursor:pointer;
       transition: transform .12s ease, border-color .15s ease, background .15s ease;
-      aspect-ratio: 3 / 5;
-      max-width: 140px;
-      width: 100%;
+      width: var(--cardW);
+      max-width: 100%;
       justify-self:center;
+
+      /* 세로로 길어 보이는 느낌 완화: 살짝 덜 길게 */
+      aspect-ratio: 3 / 4.6;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
+
     .card:hover{ transform: translateY(-2px); border-color: rgba(45,212,191,.70); }
     .card.selected{
       outline: 3px solid rgba(52,211,153,.78);
       border-color: rgba(52,211,153,.78);
     }
-    .card img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* 이미지 "잘림 없이" 그대로: contain */
+    .card img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+      background: rgba(0,0,0,.18); /* 여백 생길 때 깔리는 패널 */
+    }
 
     .badge{
       position:absolute;
@@ -180,15 +185,24 @@
 
     .mini{
       width: 92px; min-width: 92px;
-      aspect-ratio: 3/5;
+      aspect-ratio: 3/4.6;
       border-radius: 14px;
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.04);
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
       position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
-    .mini img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .mini img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+      background: rgba(0,0,0,.18);
+    }
     .mini .badge{ top:6px; left:6px; font-size: 10px; padding: 5px 7px; }
 
     /* ===== Modal ===== */
@@ -222,10 +236,16 @@
       overflow:hidden;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.04);
-      aspect-ratio: 3/5;
+      aspect-ratio: 3/4.6;
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
-    .modalPreview img{width:100%; height:100%; object-fit:cover; display:block;}
+    .modalPreview img{
+      width:100%;
+      height:100%;
+      object-fit: contain;
+      display:block;
+      background: rgba(0,0,0,.18);
+    }
     .modalHeader{
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       margin-bottom: 8px;
@@ -271,16 +291,11 @@
     }
 
     @media (max-width: 980px){
-      .grid.gt{ grid-template-columns: repeat(6, minmax(78px, 1fr)); }
-    }
-    @media (max-width: 720px){
-      .modalInner{ grid-template-columns: 140px 1fr; }
+      .grid.gt{ grid-template-columns: repeat(6, minmax(var(--cardW), 1fr)); }
     }
     @media (max-width: 640px){
-      .grid.gt{ grid-template-columns: repeat(4, minmax(78px, 1fr)); }
       header{ flex-direction:column; align-items:flex-start; }
-      .grid.nine{ grid-template-columns: repeat(3, minmax(86px, 1fr)); }
-      .card{ max-width: 120px; }
+      .grid.gt{ grid-template-columns: repeat(4, minmax(var(--cardW), 1fr)); }
       .modalInner{ grid-template-columns: 1fr; }
       .modalPreview{ width: 170px; }
     }
@@ -290,15 +305,8 @@
 <body>
   <div class="wrap">
     <header>
-      <div class="title">
-        <h1>키퍼 카드 뽑기</h1>
-        <p class="sub">
-          1/2/3/9카드 · 그랑타블로(9×4).<br/>
-          <b>그랑타블로: 카드 클릭 → 하우스 체인 생성</b> + 카드명/키워드 표시
-        </p>
-      </div>
+      <h1>키퍼 카드 뽑기</h1>
       <div class="rightTools">
-        <button class="ghost" id="btnRescan">이미지 경로 재탐색</button>
         <button class="ghost" id="btnShuffle">새로 섞기</button>
         <button class="danger" id="btnClear">초기화</button>
       </div>
@@ -315,14 +323,9 @@
         </div>
 
         <div class="seg">
+          <button class="ghost" id="btnChainLen" title="6~12 사이 순환">체인 길이: 8</button>
           <button class="primary" id="btnDraw">뽑기</button>
         </div>
-      </div>
-
-      <div class="hint" id="hint">
-        <span class="pill" id="pathPill">이미지 경로 탐색 중…</span>
-        <span class="pill" id="filePill">파일명: 키퍼-001.png ~ 키퍼-036.png</span>
-        <span class="pill" id="modePill">현재 모드: 1카드</span>
       </div>
     </section>
 
@@ -333,12 +336,7 @@
         <div class="chainTop">
           <div>
             <h3 class="chainTitle" id="chainTitle">체인</h3>
-            <div class="chainMeta" id="chainMeta">
-              그랑타블로에서 카드를 클릭하면 체인이 생성됩니다.
-            </div>
-          </div>
-          <div class="seg">
-            <button class="ghost" id="btnChainLen">체인 길이: 8</button>
+            <div class="chainMeta" id="chainMeta"></div>
           </div>
         </div>
         <div class="chainRow" id="chainRow"></div>
@@ -374,7 +372,7 @@
 
 <script>
   // =========================================
-  // 이미지 파일명/경로 자동탐색
+  // 이미지 파일명/경로 자동탐색(표시는 안 함)
   // =========================================
   const TOTAL = 36;
   const FILE_PREFIX = "키퍼-";
@@ -390,7 +388,7 @@
   ];
 
   // =========================================
-  // Kipper 카드명/키워드 (번호는 Stefan's Cards 기준) :contentReference[oaicite:1]{index=1}
+  // 카드명/키워드
   // =========================================
   const CARD_INFO = {
     1: { en:"Main significator, Male", ko:"주요 인물(남성)", kw:["본인/상대 남성","주인공","중심 인물"] },
@@ -438,7 +436,7 @@
   let deck = [];
   let basePath = null;
 
-  let gt = null; // { cardsByHouse: number[37], houseByCard: number[37] }
+  let gt = null; // { cardsByHouse: number[37] }
   let CHAIN_LEN = 8;
 
   // =========================================
@@ -449,16 +447,12 @@
   const btnDraw = document.getElementById("btnDraw");
   const btnShuffle = document.getElementById("btnShuffle");
   const btnClear = document.getElementById("btnClear");
-  const btnRescan = document.getElementById("btnRescan");
   const btnChainLen = document.getElementById("btnChainLen");
 
   const chainBox = document.getElementById("chainBox");
   const chainRow = document.getElementById("chainRow");
   const chainTitle = document.getElementById("chainTitle");
   const chainMeta = document.getElementById("chainMeta");
-
-  const pathPill = document.getElementById("pathPill");
-  const modePill = document.getElementById("modePill");
 
   const modalBackdrop = document.getElementById("modalBackdrop");
   const modalImg = document.getElementById("modalImg");
@@ -497,7 +491,6 @@
     if(deck.length < n) freshDeck();
     return deck.splice(0,n);
   }
-
   function checkImage(url){
     return new Promise((resolve)=>{
       const img = new Image();
@@ -506,26 +499,45 @@
       img.src = url + (url.includes("?") ? "" : `?v=${Date.now()}`);
     });
   }
-
   async function autoDetectBasePath(){
-    pathPill.textContent = "이미지 경로 탐색 중…";
-    pathPill.className = "pill";
     const sample = fileName(1);
-
     for(const p of BASE_PATH_CANDIDATES){
-      const url = `${p}${sample}`;
-      const ok = await checkImage(url);
-      if(ok){
-        basePath = p;
-        pathPill.textContent = `이미지 경로 OK: "${basePath}"`;
-        pathPill.className = "pill ok";
-        return true;
-      }
+      const ok = await checkImage(`${p}${sample}`);
+      if(ok){ basePath = p; return true; }
     }
     basePath = "";
-    pathPill.textContent = `이미지 경로를 못 찾았어요 (재탐색/폴더명 확인)`;
-    pathPill.className = "pill bad";
     return false;
+  }
+
+  // =========================================
+  // 카드 크기 자동 조절(세로 길어 보임 완화 + 화면 꽉 차게)
+  // =========================================
+  function setCardWidth(px){
+    grid.style.setProperty("--cardW", `${px}px`);
+  }
+
+  function applyResponsiveCardSize(){
+    const w = Math.min(window.innerWidth, 1100);
+
+    if(mode === "gt"){
+      // 9열이기 때문에 기본을 작게, 화면이 좁으면 더 작게
+      if(w >= 980) setCardWidth(100);
+      else if(w >= 720) setCardWidth(92);
+      else setCardWidth(86);
+      return;
+    }
+
+    if(mode === "9"){
+      if(w >= 980) setCardWidth(120);
+      else if(w >= 720) setCardWidth(112);
+      else setCardWidth(98);
+      return;
+    }
+
+    // 1~3,2카드
+    if(w >= 980) setCardWidth(140);
+    else if(w >= 720) setCardWidth(128);
+    else setCardWidth(110);
   }
 
   // =========================================
@@ -552,20 +564,15 @@
     modalBackdrop.style.display = "none";
     modalBackdrop.setAttribute("aria-hidden","true");
   }
-
   btnCloseModal.addEventListener("click", closeModal);
   btnOkModal.addEventListener("click", closeModal);
-  modalBackdrop.addEventListener("click", (e)=>{
-    if(e.target === modalBackdrop) closeModal();
-  });
-  window.addEventListener("keydown", (e)=>{
-    if(e.key === "Escape") closeModal();
-  });
+  modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
+  window.addEventListener("keydown", (e)=>{ if(e.key === "Escape") closeModal(); });
 
   // =========================================
   // 렌더
   // =========================================
-  function createCardEl(cardNo, indexLabel){
+  function createCardEl(cardNo, label){
     const el = document.createElement("div");
     el.className = "card";
     el.dataset.card = String(cardNo);
@@ -576,14 +583,13 @@
 
     const badge = document.createElement("div");
     badge.className = "badge";
-    badge.textContent = indexLabel;
+    badge.textContent = label;
 
     el.appendChild(img);
     el.appendChild(badge);
 
-    // 공통: 카드 클릭 시 카드명/키워드
+    // GT는 별도 핸들러에서 처리(체인+모달)
     el.addEventListener("click", ()=>{
-      // GT에서는 체인도 같이 처리하므로, GT 클릭 핸들러에서 openModal을 호출함
       if(mode !== "gt") openModal(cardNo);
     });
 
@@ -604,14 +610,12 @@
       b.classList.toggle("active", b.dataset.mode === mode);
     });
 
-    const nameMap = { "1":"1카드", "2":"2카드", "3":"3카드", "9":"9카드", "gt":"그랑타블로(9×4)" };
-    modePill.textContent = `현재 모드: ${nameMap[mode]}`;
-
     grid.className = "grid";
     if(mode === "9") grid.classList.add("nine");
     else if(mode === "gt") grid.classList.add("gt");
     else grid.classList.add("basic");
 
+    applyResponsiveCardSize();
     clearStageOnly();
   }
 
@@ -624,61 +628,23 @@
   }
 
   // =========================================
-  // 그랑타블로 9x4: 하우스 / 체인
+  // 그랑타블로 9x4: 하우스/체인
   // =========================================
   function buildGrandTableau(cards36){
-    // house: 1..36 (왼->오, 위->아래)
     const cardsByHouse = Array(37).fill(0);
-    const houseByCard = Array(37).fill(0);
-
     for(let house=1; house<=36; house++){
-      const card = cards36[house-1];
-      cardsByHouse[house] = card;
-      houseByCard[card] = house;
+      cardsByHouse[house] = cards36[house-1];
     }
-    return { cardsByHouse, houseByCard };
-  }
-
-  function renderGrandTableau(gtState){
-    grid.innerHTML = "";
-    chainBox.style.display = "block";
-    chainRow.innerHTML = "";
-    chainTitle.textContent = "체인 (하우스 기반)";
-    chainMeta.textContent = "카드를 클릭하면: 시작 하우스 → (그 하우스의 카드 번호) 하우스로 이동… 방식으로 체인이 이어집니다.";
-
-    for(let house=1; house<=36; house++){
-      const cardNo = gtState.cardsByHouse[house];
-      const el = createCardEl(cardNo, `H${house}`);
-      el.dataset.house = String(house);
-
-      el.addEventListener("click", (ev)=>{
-        // 기본 클릭 모달 방지(중복 방지)
-        ev.stopPropagation();
-
-        document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
-        el.classList.add("selected");
-
-        // 하우스 기반 체인 생성
-        const startHouse = house;
-        const chain = buildHouseChain(gtState, startHouse, CHAIN_LEN);
-        renderChain(chain);
-
-        // 카드 정보 모달 (하우스 정보 같이)
-        openModal(cardNo, `하우스 H${house}`);
-      });
-
-      grid.appendChild(el);
-    }
+    return { cardsByHouse };
   }
 
   function buildHouseChain(gtState, startHouse, len){
-    // 규칙:
-    // 현재 하우스 H에 있는 카드 = C
-    // 다음 하우스 = C (카드 번호)
-    // 반복 (루프 방지: 같은 하우스 재등장 시 중단)
+    // 하우스 기반 체인:
+    // 현재 하우스(H)에 있는 카드 = C
+    // 다음 하우스 = C(카드 번호)
+    // 반복 (루프면 중단)
     const chain = [];
     const seenHouses = new Set();
-
     let currentHouse = startHouse;
 
     while(chain.length < len){
@@ -689,26 +655,24 @@
       const card = gtState.cardsByHouse[currentHouse];
       chain.push({ house: currentHouse, card });
 
-      const nextHouse = card; // 핵심: 카드 번호를 하우스 번호로
-      currentHouse = nextHouse;
+      currentHouse = card;
     }
-
     return chain;
   }
 
   function renderChain(chain){
     chainRow.innerHTML = "";
-
     if(chain.length === 0){
-      chainMeta.textContent = "체인을 만들 수 없어요. (데이터 오류)";
+      chainTitle.textContent = "체인";
+      chainMeta.textContent = "";
       return;
     }
 
     const start = chain[0];
     chainTitle.textContent = `체인 (시작: H${start.house})`;
-    chainMeta.textContent = `H${start.house}의 카드(${start.card}) → 다음 하우스(H${start.card})… (길이 ${chain.length}, 설정 ${CHAIN_LEN})`;
+    chainMeta.textContent = `H${start.house} → H${start.card} → … (길이 ${chain.length}, 설정 ${CHAIN_LEN})`;
 
-    chain.forEach((step, idx)=>{
+    chain.forEach((step)=>{
       const mini = document.createElement("div");
       mini.className = "mini";
 
@@ -718,18 +682,44 @@
 
       const badge = document.createElement("div");
       badge.className = "badge";
-      badge.textContent = idx === 0 ? `H${step.house}` : `H${step.house}`;
+      badge.textContent = `H${step.house}`;
 
       mini.appendChild(img);
       mini.appendChild(badge);
 
-      // 체인 미니 클릭 시도 카드 정보 열기
       mini.addEventListener("click", ()=>{
         openModal(step.card, `체인: H${step.house}`);
       });
 
       chainRow.appendChild(mini);
     });
+  }
+
+  function renderGrandTableau(gtState){
+    grid.innerHTML = "";
+    chainBox.style.display = "block";
+    chainRow.innerHTML = "";
+    chainTitle.textContent = "체인";
+    chainMeta.textContent = "";
+
+    for(let house=1; house<=36; house++){
+      const cardNo = gtState.cardsByHouse[house];
+      const el = createCardEl(cardNo, `H${house}`);
+      el.dataset.house = String(house);
+
+      el.addEventListener("click", (ev)=>{
+        ev.stopPropagation();
+        document.querySelectorAll(".card.selected").forEach(x=>x.classList.remove("selected"));
+        el.classList.add("selected");
+
+        const chain = buildHouseChain(gtState, house, CHAIN_LEN);
+        renderChain(chain);
+
+        openModal(cardNo, `하우스 H${house}`);
+      });
+
+      grid.appendChild(el);
+    }
   }
 
   // =========================================
@@ -763,29 +753,13 @@
   btnShuffle.addEventListener("click", ()=> freshDeck());
   btnClear.addEventListener("click", ()=> clearStageOnly());
 
-  btnRescan.addEventListener("click", async ()=>{
-    await autoDetectBasePath();
-    // 화면에 떠있는 카드 이미지 갱신
-    document.querySelectorAll(".card").forEach(cardEl=>{
-      const cardNo = Number(cardEl.dataset.card || "0");
-      const img = cardEl.querySelector("img");
-      if(cardNo && img) img.src = imgSrc(cardNo);
-    });
-    document.querySelectorAll(".mini").forEach(mini=>{
-      const img = mini.querySelector("img");
-      const alt = img?.alt || "";
-      const m = alt.match(/Chain\s+(\d+)/);
-      if(m && img) img.src = imgSrc(Number(m[1]));
-    });
-  });
-
   btnChainLen.addEventListener("click", ()=>{
-    // 6~12 사이로 순환
     CHAIN_LEN = CHAIN_LEN >= 12 ? 6 : CHAIN_LEN + 1;
     btnChainLen.textContent = `체인 길이: ${CHAIN_LEN}`;
-    // 현재 체인은 유지(원하면 클릭해서 새로 생성)
-    chainMeta.textContent = `체인 길이를 ${CHAIN_LEN}로 설정했어요. 그랑타블로에서 카드를 다시 클릭하면 새 길이로 체인이 생성됩니다.`;
+    // 다음 클릭부터 적용
   });
+
+  window.addEventListener("resize", applyResponsiveCardSize);
 
   // =========================================
   // 초기화
@@ -794,7 +768,7 @@
     btnChainLen.textContent = `체인 길이: ${CHAIN_LEN}`;
     freshDeck();
     setMode("1");
-    await autoDetectBasePath();
+    await autoDetectBasePath(); // 내부 탐색만, 화면 표시 없음
   })();
 </script>
 </body>
